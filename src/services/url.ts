@@ -25,4 +25,5 @@ export const waitingListNumberUrls = {
     CREATE_NEW_WAITING_LIST_NUMBER: (waitingListId: string) => `${prefixer}waiting-list-number/create-next/${waitingListId}`,
     GET_WAITING_LIST_NUMBER_BY_SHOP_ID: (shopId: string) => `${prefixer}waiting-list-number/by-shop-id/${shopId}`,
     UPDATE_WAITING_LIST_NUMBER_STATUS: (numberId: string) => `${prefixer}waiting-list-number/status/${numberId}`,
+    GET_WAITING_LIST_NUMBER_BY_LIST_ID: (listId: string) => `${prefixer}waiting-list-number/by-list/${listId}`,
 }

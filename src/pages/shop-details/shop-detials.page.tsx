@@ -10,9 +10,9 @@ import {
 } from '@/components'
 import { useGetShopByIDHook } from '@/hooks/shop'
 import { useEffect, useState } from 'react'
-import { useCreateNewListNumberHook } from '@/hooks/waiting-list-number'
-import type { IBarberShopDtoOut, INewWaitingListNumberDtoIn } from '@/dto'
-import { useShopStore } from '@/stores'
+import { useCreateNewListNumberHook, useGetListNumberByListIdHook } from '@/hooks/waiting-list-number'
+import { WaitingListNumberStatus, type IBarberShopDtoOut, type INewWaitingListNumberDtoIn, type IWaitingListDtoOut } from '@/dto'
+import { useShopStore, useWaitingListNumberStore } from '@/stores'
 
 export interface IShopDetailsPageProps {
   default_props?: boolean
@@ -41,10 +41,15 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   const navigate = useNavigate()
   const { shopId } = useParams<{ shopId: string }>()
   const { currentDevice } = useShopStore()
+  const {  setCurrentWaitingListNumber } = useWaitingListNumberStore()
   const [currentShop, setCurrentShop] = useState<IBarberShopDtoOut | null>(null)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [currentWaitingList, setCurrentWaitingList] = useState<IWaitingListDtoOut | null>(null)
   
   const { data } = useGetShopByIDHook(shopId)
+  const { data: listNumberDatas } = useGetListNumberByListIdHook(currentWaitingList?.id)
   const { mutate: doCreateNewListNumber } = useCreateNewListNumberHook()
+  const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find((_) => _.deviceId === currentDevice?.id)
 
   useEffect(() => {
     if (data?.data.shop) {
@@ -52,9 +57,30 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
     }
   },[data])
 
+  useEffect(() => {
+    console.log("listNumberDatas::::",listNumberDatas?.data.waitingListNumbers)
+    if(listNumberDatas){
+      setCurrentWaitingListNumber(listNumberDatas?.data.waitingListNumbers)
+    }
+  },[listNumberDatas])
+
+  useEffect(() => {
+    if(currentShop){
+      const listDay = currentShop.barber_shop_waiting_list.find((_) => new Date(_.createdAt).getDay() === new Date().getDay())
+      if(listDay){
+        setIsOpen(true)
+        setCurrentWaitingList(listDay)
+      }
+    }
+  },[currentShop])
+
   const handleTakeTicket = () => {
     console.log(`Taking ticket for salon ${shopId}`)
-    const currentList = currentShop.barber_shop_waiting_list.find((_) => _.createdAt.getDay() === new Date().getDay())
+    if(deviceListNumber){
+      navigate(`/waiting-list-details/${deviceListNumber.waitingListId}`, {state:{deviceListNumber: deviceListNumber}})
+      return
+    }
+    const currentList = currentShop.barber_shop_waiting_list.find((_) => new Date(_.createdAt).getDay() === new Date().getDay())
     if(currentList){
       const requestBody: INewWaitingListNumberDtoIn = {
         waitingListId: currentList.id,
@@ -63,6 +89,10 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
       doCreateNewListNumber(requestBody, {
         onSuccess: (response) => {
           console.log('Ticket taken successfully:', response.data)
+          if(response.data && currentWaitingList){
+            navigate(`/waiting-list-details/${currentWaitingList.id}`, {state:{deviceListNumber: response?.data?.waitingListNumber}})
+            // navigate(`/waiting-list-details/${currentWaitingList.id}`)
+          }
         },
         onError: (error) => {
           console.error('Failed to take ticket:', error)
@@ -70,6 +100,12 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
       })
     }
   }
+
+  console.log({currentWaitingList})
+
+  const waitingCount = listNumberDatas?.data.waitingListNumbers.filter((_) => _.status === WaitingListNumberStatus.CREATED)
+
+  console.log({deviceListNumber})
 
   return (
     <div className="min-h-screen w-full bg-dark-bg lg:h-screen lg:min-h-0">
@@ -98,14 +134,14 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-3 gap-1.5">
-                  <StatCard value={salonData.waitingCount} label="En attente" />
+                  <StatCard value={waitingCount?.length} label="En attente" />
                   <StatCard
                     value={salonData.avgWaitTime}
                     unit="min"
                     label="Attente moy."
                   />
                   <StatCard
-                    value={String(salonData.currentNumber).padStart(2, '0')}
+                    value={String(currentWaitingList?.current_number).padStart(2, '0')}
                     label="N° courant"
                   />
                 </div>
@@ -131,10 +167,10 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
                 <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-2.5">
                   File en direct
                 </p>
-                {salonData.queue.map((item, index) => (
+                {listNumberDatas?.data.waitingListNumbers.map((item, index) => (
                   <QueueItem
                     key={index}
-                    ticketNumber={item.ticketNumber}
+                    ticketNumber={item.value}
                     status={item.status}
                     isLast={index === salonData.queue.length - 1}
                   />
@@ -145,11 +181,11 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
               <div className="px-3 pb-4">
                 <button
                   onClick={handleTakeTicket}
-                  disabled={currentShop?.barber_shop_waiting_list === null}
+                  disabled={!isOpen}
                   className="w-full py-3.5 rounded-[14px] border-none bg-gold text-dark-bg text-sm font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-gold/90 transition-colors disabled:bg-dark-card disabled:text-white/30 disabled:cursor-not-allowed disabled:hover:bg-dark-card"
                 >
                   <Ticket className="w-4 h-4" />
-                  {currentShop?.barber_shop_waiting_list === null ? "Pas encore disponible" : "Tirer mon numéro"}
+                  {!isOpen ? "Pas encore disponible" : deviceListNumber ? "Voir détails file" : "Tirer mon numéro"}
                 </button>
               </div>
             </main>

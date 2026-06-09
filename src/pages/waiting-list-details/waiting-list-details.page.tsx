@@ -10,6 +10,9 @@ import {
   Bell,
   User,
 } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { WaitingListNumberStatus, type IWaitingListNumbersDtoOut } from '@/dto'
+import { useWaitingListNumberStore } from '@/stores'
 
 export interface IWaitingListDetailsPageProps {
   default_props?: boolean
@@ -80,7 +83,8 @@ const StepItem: React.FC<StepItemProps> = ({
 
 interface QueueAvatarProps {
   number: string
-  status: 'active' | 'waiting' | 'current'
+  // status: 'active' | 'waiting' | 'current'
+  status: string
   size?: 'sm' | 'md'
 }
 
@@ -149,23 +153,40 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false }) => {
 export const WaitingListDetailsPage: React.FC<
   IWaitingListDetailsPageProps
 > = () => {
+  const { state } = useLocation();
+  const {  currentWaitingListNumber } = useWaitingListNumberStore()
+  const deviceListNumber: IWaitingListNumbersDtoOut = state?.deviceListNumber;
   // Ticket data (can be passed as props in a real implementation)
-  const ticketNumber = '12'
-  const drawTime = '10:45'
+  const drawTime = new Date(deviceListNumber?.createdAt).toLocaleTimeString('fr-FR')
   const peopleAhead = 5
   const estimatedMinutes = 22
   const progressPercent = 58
   const salonName = 'Salon Baraka'
 
   // Queue data
-  const queueNumbers = [
-    { number: '07', status: 'active' as const },
-    { number: '08', status: 'waiting' as const },
-    { number: '09', status: 'waiting' as const },
-    { number: '10', status: 'waiting' as const },
-    { number: '11', status: 'waiting' as const },
-    { number: '12', status: 'current' as const, size: 'md' as const },
-  ]
+  // const queueNumbers = [
+  //   { number: '07', status: 'active' as const },
+  //   { number: '08', status: 'waiting' as const },
+  //   { number: '09', status: 'waiting' as const },
+  //   { number: '10', status: 'waiting' as const },
+  //   { number: '11', status: 'waiting' as const },
+  //   { number: '12', status: 'current' as const, size: 'md' as const },
+  // ]
+
+  const queueNumbers = currentWaitingListNumber.map((item, index) => ({
+    number: item.value,
+    status:
+      item.status == WaitingListNumberStatus.CREATED
+        ? 'waiting'
+        : item.status == WaitingListNumberStatus.IN_PROGRESS
+          ? 'active'
+          : index === currentWaitingListNumber.length - 1 && 'current',
+    size: 'md' as const,
+  }))
+
+  console.log({queueNumbers})
+  console.log({currentWaitingListNumber})
+
 
   return (
     <div className="w-full min-h-screen bg-dark-bg flex flex-col items-center">
@@ -193,7 +214,7 @@ export const WaitingListDetailsPage: React.FC<
               Votre numéro
             </p>
             <p className="text-[72px] font-medium text-gold leading-none">
-              {ticketNumber}
+              {deviceListNumber?.value}
             </p>
             <p className="text-[11px] text-white/35 mt-2">
               Tiré à {drawTime} · {peopleAhead} personnes avant vous
@@ -243,7 +264,7 @@ export const WaitingListDetailsPage: React.FC<
             <StepItem
               icon={<Check className="w-3.5 h-3.5" />}
               title="Numéro tiré"
-              subtitle={`N°${ticketNumber} enregistré · ${drawTime}`}
+              subtitle={`N°${deviceListNumber?.value} enregistré · ${drawTime}`}
               status="completed"
             />
             <StepItem
