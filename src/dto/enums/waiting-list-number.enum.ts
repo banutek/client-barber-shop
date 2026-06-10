@@ -4,6 +4,7 @@ export enum WaitingListNumberStatus {
     NEXT = 'NEXT',
     PENDING = 'PENDING',
     IN_PROGRESS = 'IN_PROGRESS',
-    COMPLETED = 'COMPLETED'
+    COMPLETED = 'COMPLETED',
+    JUMPED = 'JUMPED',
 }
 

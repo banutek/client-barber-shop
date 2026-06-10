@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import { WaitingListNumberStatus, type IWaitingListNumbersDtoOut } from '@/dto'
-import { useWaitingListNumberStore } from '@/stores'
+import { useShopStore, useWaitingListNumberStore } from '@/stores'
 
 export interface IWaitingListDetailsPageProps {
   default_props?: boolean
@@ -154,14 +154,14 @@ export const WaitingListDetailsPage: React.FC<
   IWaitingListDetailsPageProps
 > = () => {
   const { state } = useLocation();
+  const { currentShop } = useShopStore()
   const {  currentWaitingListNumber } = useWaitingListNumberStore()
   const deviceListNumber: IWaitingListNumbersDtoOut = state?.deviceListNumber;
   // Ticket data (can be passed as props in a real implementation)
   const drawTime = new Date(deviceListNumber?.createdAt).toLocaleTimeString('fr-FR')
-  const peopleAhead = 5
   const estimatedMinutes = 22
-  const progressPercent = 58
-  const salonName = 'Salon Baraka'
+  // const progressPercent = 58
+  const salonName = currentShop?.name
 
   // Queue data
   // const queueNumbers = [
@@ -177,12 +177,46 @@ export const WaitingListDetailsPage: React.FC<
     number: item.value,
     status:
       item.status == WaitingListNumberStatus.CREATED
-        ? 'waiting'
+        ? index === currentWaitingListNumber.length - 1 ? 'current' : 'waiting'
         : item.status == WaitingListNumberStatus.IN_PROGRESS
-          ? 'active'
-          : index === currentWaitingListNumber.length - 1 && 'current',
+          ? index === currentWaitingListNumber.length - 1 ? 'current': 'active'
+          : index === currentWaitingListNumber.length - 1
+            ? 'current'
+            : 'waiting',
     size: 'md' as const,
   }))
+
+  console.log({queueNumbers})
+
+  const getPersonnesAvant = (
+    numeros: IWaitingListNumbersDtoOut[],
+    monNumero: IWaitingListNumbersDtoOut
+  ): number => {
+    return numeros.filter(
+      (n) =>
+        n.value < monNumero.value &&
+        (n.status === WaitingListNumberStatus.CREATED || n.status === WaitingListNumberStatus.IN_PROGRESS)
+    ).length;
+  }
+
+  const calculerProgression = (numeros: IWaitingListNumbersDtoOut[]) => {
+  const total = numeros.length;
+  if (total === 0) return { progression: 0, traites: 0, total: 0 };
+
+  const traites = numeros.filter(
+    (n) => n.status === WaitingListNumberStatus.COMPLETED || n.status === WaitingListNumberStatus.JUMPED
+  ).length;
+
+  return {
+    progression: Math.round((traites / total) * 100),
+    traites,
+    total,
+  };
+}
+
+  const { progression } = calculerProgression(currentWaitingListNumber)
+  const progressPercent = progression
+  const peopleAhead = getPersonnesAvant(currentWaitingListNumber, deviceListNumber)
 
   console.log({queueNumbers})
   console.log({currentWaitingListNumber})

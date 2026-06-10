@@ -43,7 +43,9 @@ const salons = [
 ]
 
 export const HomePage: React.FC<IHomePageProps> = () => {
-  const { data } = useGetActiveShopsHook()
+  const stored: string | null = localStorage.getItem('device_infos')
+  console.log({stored})
+  const { data } = useGetActiveShopsHook(stored)
   const navigate = useNavigate()
 
   useEffect(() => {

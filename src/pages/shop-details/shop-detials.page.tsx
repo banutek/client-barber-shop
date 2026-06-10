@@ -12,7 +12,7 @@ import { useGetShopByIDHook } from '@/hooks/shop'
 import { useEffect, useState } from 'react'
 import { useCreateNewListNumberHook, useGetListNumberByListIdHook } from '@/hooks/waiting-list-number'
 import { WaitingListNumberStatus, type IBarberShopDtoOut, type INewWaitingListNumberDtoIn, type IWaitingListDtoOut } from '@/dto'
-import { useShopStore, useWaitingListNumberStore } from '@/stores'
+import { useDeviceStore, useShopStore, useWaitingListNumberStore } from '@/stores'
 
 export interface IShopDetailsPageProps {
   default_props?: boolean
@@ -40,15 +40,15 @@ const salonData = {
 export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   const navigate = useNavigate()
   const { shopId } = useParams<{ shopId: string }>()
-  const { currentDevice } = useShopStore()
+  const { currentDevice } = useDeviceStore()
+  const { currentShop, setCurrentShop } = useShopStore()
   const {  setCurrentWaitingListNumber } = useWaitingListNumberStore()
-  const [currentShop, setCurrentShop] = useState<IBarberShopDtoOut | null>(null)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [currentWaitingList, setCurrentWaitingList] = useState<IWaitingListDtoOut | null>(null)
   
   const { data } = useGetShopByIDHook(shopId)
   const { data: listNumberDatas } = useGetListNumberByListIdHook(currentWaitingList?.id)
-  const { mutate: doCreateNewListNumber } = useCreateNewListNumberHook()
+  const { mutate: doCreateNewListNumber } = useCreateNewListNumberHook() 
   const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find((_) => _.deviceId === currentDevice?.id)
 
   useEffect(() => {

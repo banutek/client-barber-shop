@@ -7,8 +7,6 @@ class BaseMethods {
     const headers = {
       'Content-Type': isFile ? 'multipart/form-data' : 'application/json',
       Accept: 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      Credentials: 'same-origin',
     }
     return headers
   }
