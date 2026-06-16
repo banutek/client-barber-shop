@@ -1,5 +1,6 @@
-export const baseUrl = 'http://127.0.0.1:4200/'
-export const prefixer = 'http://127.0.0.1:4200/api/v1/'
+// export const baseUrl = 'http://127.0.0.1:4200/'
+export const baseUrl = 'http://172.20.93.64:4200/'
+export const prefixer = 'http://172.20.93.64:4200/api/v1/'
 
 export const authUrls = {
     LOGIN_USER: `${prefixer}auth/login`,

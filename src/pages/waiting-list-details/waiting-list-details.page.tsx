@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StatusBar, SectionLabel } from '../../components'
 import {
   Check,
@@ -11,157 +11,34 @@ import {
   User,
 } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
-import { WaitingListNumberStatus, type IWaitingListNumbersDtoOut } from '@/dto'
-import { useShopStore, useWaitingListNumberStore } from '@/stores'
+import { WaitingListNumberStatus, type IBarberShopDtoOut, type IWaitingListDtoOut, type IWaitingListNumbersDtoOut } from '@/dto'
+import { useWaitingListNumberStore } from '@/stores'
+import { useGetListNumberByListIdHook } from '@/hooks/waiting-list-number'
+import { NavItemComponent, QueueAvatarComponent, StepItemComponent } from './childrens'
 
 export interface IWaitingListDetailsPageProps {
   default_props?: boolean
   default_method?: () => void
 }
 
-interface StepItemProps {
-  icon: React.ReactNode
-  title: string
-  subtitle: string
-  status: 'completed' | 'current' | 'pending'
-  isLast?: boolean
-}
-
-const StepItem: React.FC<StepItemProps> = ({
-  icon,
-  title,
-  subtitle,
-  status,
-  isLast = false,
-}) => {
-  const iconBgClass =
-    status === 'completed'
-      ? 'bg-success-bg'
-      : status === 'current'
-        ? 'bg-gold-bg'
-        : 'bg-dark-card'
-
-  const iconColorClass =
-    status === 'completed'
-      ? 'text-success'
-      : status === 'current'
-        ? 'text-gold'
-        : 'text-white/20'
-
-  const titleColorClass =
-    status === 'pending' ? 'text-white/35' : 'text-text-primary'
-
-  const subtitleColorClass =
-    status === 'completed'
-      ? 'text-white/35'
-      : status === 'current'
-        ? 'text-white/35'
-        : 'text-white/20'
-
-  return (
-    <div className={`flex gap-3 relative ${isLast ? '' : 'pb-3'}`}>
-      {!isLast && (
-        <div
-          className="absolute left-[15px] top-[30px] bottom-0 w-px bg-white/[0.07]"
-          aria-hidden="true"
-        />
-      )}
-      <div
-        className={`w-[30px] h-[30px] rounded-full ${iconBgClass} flex items-center justify-center flex-shrink-0 z-[1]`}
-      >
-        <span className={iconColorClass}>{icon}</span>
-      </div>
-      <div>
-        <p className={`text-[13px] font-medium ${titleColorClass} mb-px`}>
-          {title}
-        </p>
-        <p className={`text-[11px] ${subtitleColorClass}`}>{subtitle}</p>
-      </div>
-    </div>
-  )
-}
-
-interface QueueAvatarProps {
-  number: string
-  // status: 'active' | 'waiting' | 'current'
-  status: string
-  size?: 'sm' | 'md'
-}
-
-const QueueAvatar: React.FC<QueueAvatarProps> = ({
-  number,
-  status,
-  size = 'sm',
-}) => {
-  const dimensions = size === 'md' ? 'w-7 h-7' : 'w-[26px] h-[26px]'
-  const fontSize = size === 'md' ? 'text-[9px] font-medium' : 'text-[9px]'
-
-  if (status === 'active') {
-    return (
-      <div
-        className={`${dimensions} rounded-full bg-success border-2 border-dark-bg flex items-center justify-center ${fontSize} text-dark-bg z-[6]`}
-      >
-        {number}
-      </div>
-    )
-  }
-
-  if (status === 'current') {
-    return (
-      <div
-        className={`${dimensions} rounded-full bg-gold-bg border-2 border-gold flex items-center justify-center ${fontSize} text-gold z-[1]`}
-      >
-        {number}
-      </div>
-    )
-  }
-
-  return (
-    <div
-      className={`${dimensions} rounded-full bg-dark-card border-2 border-dark-bg flex items-center justify-center ${fontSize} text-white/40 -ml-1`}
-    >
-      {number}
-    </div>
-  )
-}
-
-interface NavItemProps {
-  icon: React.ReactNode
-  label: string
-  isActive?: boolean
-}
-
-const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive = false }) => {
-  return (
-    <div className="flex-1 flex flex-col items-center gap-[3px] py-1.5 px-1">
-      {isActive ? (
-        <div className="bg-gold-bg rounded-[10px] w-10 h-7 flex items-center justify-center">
-          <span className="text-gold">{icon}</span>
-        </div>
-      ) : (
-        <span className="text-white/25">{icon}</span>
-      )}
-      <span
-        className={`text-[9px] ${isActive ? 'text-gold font-medium' : 'text-white/25'}`}
-      >
-        {label}
-      </span>
-    </div>
-  )
-}
-
 export const WaitingListDetailsPage: React.FC<
   IWaitingListDetailsPageProps
 > = () => {
   const { state } = useLocation();
-  const { currentShop } = useShopStore()
-  const {  currentWaitingListNumber } = useWaitingListNumberStore()
+  const { CREATED, IN_PROGRESS, NEXT, PENDING, COMPLETED, JUMPED } = WaitingListNumberStatus
+  // const { currentShop } = useShopStore()
+  const {  currentWaitingListNumber, setCurrentWaitingListNumber } = useWaitingListNumberStore()
+    // const { currentWaitingList} = useWaitingListStore()
   const deviceListNumber: IWaitingListNumbersDtoOut = state?.deviceListNumber;
+  const currentList: IWaitingListDtoOut = state?.currentList;
+  const shop : IBarberShopDtoOut = state?.shop
   // Ticket data (can be passed as props in a real implementation)
   const drawTime = new Date(deviceListNumber?.createdAt).toLocaleTimeString('fr-FR')
   const estimatedMinutes = 22
   // const progressPercent = 58
-  const salonName = currentShop?.name
+  const salonName = shop?.name
+
+  const { data: listNumberDatas } = useGetListNumberByListIdHook(currentList?.id)
 
   // Queue data
   // const queueNumbers = [
@@ -173,12 +50,18 @@ export const WaitingListDetailsPage: React.FC<
   //   { number: '12', status: 'current' as const, size: 'md' as const },
   // ]
 
+   useEffect(() => {
+      if(listNumberDatas){
+        setCurrentWaitingListNumber(listNumberDatas?.data.waitingListNumbers)
+      }
+    },[listNumberDatas])
+
   const queueNumbers = currentWaitingListNumber.map((item, index) => ({
     number: item.value,
     status:
-      item.status == WaitingListNumberStatus.CREATED
+      item.status == CREATED
         ? index === currentWaitingListNumber.length - 1 ? 'current' : 'waiting'
-        : item.status == WaitingListNumberStatus.IN_PROGRESS
+        : item.status == IN_PROGRESS
           ? index === currentWaitingListNumber.length - 1 ? 'current': 'active'
           : index === currentWaitingListNumber.length - 1
             ? 'current'
@@ -195,7 +78,7 @@ export const WaitingListDetailsPage: React.FC<
     return numeros.filter(
       (n) =>
         n.value < monNumero.value &&
-        (n.status === WaitingListNumberStatus.CREATED || n.status === WaitingListNumberStatus.IN_PROGRESS)
+        (n.status === CREATED || n.status === IN_PROGRESS)
     ).length;
   }
 
@@ -204,7 +87,7 @@ export const WaitingListDetailsPage: React.FC<
   if (total === 0) return { progression: 0, traites: 0, total: 0 };
 
   const traites = numeros.filter(
-    (n) => n.status === WaitingListNumberStatus.COMPLETED || n.status === WaitingListNumberStatus.JUMPED
+    (n) => n.status === COMPLETED || n.status === JUMPED
   ).length;
 
   return {
@@ -220,6 +103,7 @@ export const WaitingListDetailsPage: React.FC<
 
   console.log({queueNumbers})
   console.log({currentWaitingListNumber})
+  console.log({deviceListNumber})
 
 
   return (
@@ -250,9 +134,15 @@ export const WaitingListDetailsPage: React.FC<
             <p className="text-[72px] font-medium text-gold leading-none">
               {deviceListNumber?.value}
             </p>
-            <p className="text-[11px] text-white/35 mt-2">
-              Tiré à {drawTime} · {peopleAhead} personnes avant vous
-            </p>
+            { [IN_PROGRESS, CREATED, NEXT, PENDING].includes(deviceListNumber?.status) ?
+              <p className="text-[11px] text-white/35 mt-2">
+                Tiré à {drawTime} · {peopleAhead} personnes avant vous
+              </p> :
+              <p className="text-[11px] text-gold mt-2">
+                Tiré à {drawTime} · vous avez été servis
+              </p>
+
+            }
           </div>
 
           {/* Progress Section */}
@@ -265,7 +155,7 @@ export const WaitingListDetailsPage: React.FC<
             </div>
 
             {/* Progress Bar */}
-            <div className="h-[5px] bg-dark-card rounded-[3px] mb-3">
+            <div className="h-1.25 bg-dark-card rounded-[3px] mb-3">
               <div
                 className="h-full bg-gold rounded-[3px] transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
@@ -279,7 +169,7 @@ export const WaitingListDetailsPage: React.FC<
                   key={item.number}
                   style={{ zIndex: queueNumbers.length - index }}
                 >
-                  <QueueAvatar
+                  <QueueAvatarComponent
                     number={item.number}
                     status={item.status}
                     size={item.size}
@@ -287,52 +177,61 @@ export const WaitingListDetailsPage: React.FC<
                 </div>
               ))}
             </div>
-
-            <p className="text-[11px] text-white/30">
-              N°07 en chaise · vous êtes {peopleAhead + 1}ème
-            </p>
+            { Number(deviceListNumber?.value) === currentList?.current_number ?
+            deviceListNumber?.status === IN_PROGRESS ?
+              <p className="text-[11px] text-success font-bold">
+                {`C'est votre tour !`}
+              </p> : deviceListNumber?.status === COMPLETED && (
+                <p className="text-[11px] text-orange-500 font-bold">
+                {`Merci pour votre confiance !`}
+              </p>
+              ) : deviceListNumber?.status !== COMPLETED &&
+              <p className="text-[11px] text-white/30">
+                {`N°${currentList?.current_number} en chaise · vous êtes ${peopleAhead + 1}ème`}
+              </p>
+            }
           </div>
 
           {/* Steps Timeline */}
           <div className="bg-dark-secondary border border-dark-border rounded-2xl p-3.5">
-            <StepItem
+            <StepItemComponent
               icon={<Check className="w-3.5 h-3.5" />}
               title="Numéro tiré"
               subtitle={`N°${deviceListNumber?.value} enregistré · ${drawTime}`}
-              status="completed"
+              status={ deviceListNumber?.value ? "completed" : "pending"}
             />
-            <StepItem
+            <StepItemComponent
               icon={<Clock className="w-3.5 h-3.5" />}
               title="En attente"
               subtitle="Vous serez notifié"
-              status="current"
+              status={ deviceListNumber?.value ? "completed" : "pending"}
             />
-            <StepItem
+            <StepItemComponent
               icon={<QrCode className="w-3.5 h-3.5" />}
               title="Scanner le QR code"
               subtitle="Quand c'est votre tour"
-              status="pending"
+              status={[IN_PROGRESS, COMPLETED].includes(deviceListNumber?.status) ? "completed" : "pending"}
             />
-            <StepItem
+            <StepItemComponent
               icon={<Scissors className="w-3.5 h-3.5" />}
               title="Prise en charge"
               subtitle="Le coiffeur vous accueille"
-              status="pending"
+              status={deviceListNumber?.status === IN_PROGRESS ? "current" : deviceListNumber?.status === COMPLETED ? "completed" : "pending"}
               isLast
             />
           </div>
         </div>
 
         {/* Bottom Navigation */}
-        <div className="flex pt-2 pb-1 border-t border-white/[0.06] gap-0.5 mt-auto lg:rounded-b-[28px]">
-          <NavItem
+        <div className="flex pt-2 pb-1 border-t border-white/6 gap-0.5 mt-auto lg:rounded-b-[28px]">
+          <NavItemComponent
             icon={<Home className="w-5 h-5" />}
             label="Ma file"
             isActive
           />
-          <NavItem icon={<Camera className="w-5 h-5" />} label="Scanner" />
-          <NavItem icon={<Bell className="w-5 h-5" />} label="Alertes" />
-          <NavItem icon={<User className="w-5 h-5" />} label="Profil" />
+          <NavItemComponent icon={<Camera className="w-5 h-5" />} label="Scanner" />
+          <NavItemComponent icon={<Bell className="w-5 h-5" />} label="Alertes" />
+          <NavItemComponent icon={<User className="w-5 h-5" />} label="Profil" />
         </div>
       </div>
     </div>

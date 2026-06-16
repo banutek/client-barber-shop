@@ -11,8 +11,8 @@ import {
 import { useGetShopByIDHook } from '@/hooks/shop'
 import { useEffect, useState } from 'react'
 import { useCreateNewListNumberHook, useGetListNumberByListIdHook } from '@/hooks/waiting-list-number'
-import { WaitingListNumberStatus, type IBarberShopDtoOut, type INewWaitingListNumberDtoIn, type IWaitingListDtoOut } from '@/dto'
-import { useDeviceStore, useShopStore, useWaitingListNumberStore } from '@/stores'
+import { ShopOpenStatus, WaitingListNumberStatus, type INewWaitingListNumberDtoIn } from '@/dto'
+import { useDeviceStore, useShopStore, useWaitingListNumberStore, useWaitingListStore } from '@/stores'
 
 export interface IShopDetailsPageProps {
   default_props?: boolean
@@ -44,7 +44,8 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   const { currentShop, setCurrentShop } = useShopStore()
   const {  setCurrentWaitingListNumber } = useWaitingListNumberStore()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [currentWaitingList, setCurrentWaitingList] = useState<IWaitingListDtoOut | null>(null)
+  // const [currentWaitingList, setCurrentWaitingList] = useState<IWaitingListDtoOut | null>(null)
+  const { currentWaitingList, setCurrentWaitingList} = useWaitingListStore()
   
   const { data } = useGetShopByIDHook(shopId)
   const { data: listNumberDatas } = useGetListNumberByListIdHook(currentWaitingList?.id)
@@ -54,11 +55,13 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   useEffect(() => {
     if (data?.data.shop) {
       setCurrentShop(data.data.shop)
+      setIsOpen(data.data.shop.openStatus === ShopOpenStatus.OPEN ? true : false)
     }
   },[data])
 
+  console.log({currentShop})
+
   useEffect(() => {
-    console.log("listNumberDatas::::",listNumberDatas?.data.waitingListNumbers)
     if(listNumberDatas){
       setCurrentWaitingListNumber(listNumberDatas?.data.waitingListNumbers)
     }
@@ -68,19 +71,19 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
     if(currentShop){
       const listDay = currentShop.barber_shop_waiting_list.find((_) => new Date(_.createdAt).getDay() === new Date().getDay())
       if(listDay){
-        setIsOpen(true)
         setCurrentWaitingList(listDay)
       }
     }
   },[currentShop])
 
   const handleTakeTicket = () => {
-    console.log(`Taking ticket for salon ${shopId}`)
     if(deviceListNumber){
-      navigate(`/waiting-list-details/${deviceListNumber.waitingListId}`, {state:{deviceListNumber: deviceListNumber}})
+      navigate(`/waiting-list-details/${deviceListNumber.waitingListId}`, {state:{deviceListNumber: deviceListNumber, currentList: currentWaitingList, shop: currentShop}})
       return
     }
     const currentList = currentShop.barber_shop_waiting_list.find((_) => new Date(_.createdAt).getDay() === new Date().getDay())
+    console.log({currentShop})
+    console.log({currentList})
     if(currentList){
       const requestBody: INewWaitingListNumberDtoIn = {
         waitingListId: currentList.id,
@@ -90,7 +93,7 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
         onSuccess: (response) => {
           console.log('Ticket taken successfully:', response.data)
           if(response.data && currentWaitingList){
-            navigate(`/waiting-list-details/${currentWaitingList.id}`, {state:{deviceListNumber: response?.data?.waitingListNumber}})
+            navigate(`/waiting-list-details/${currentWaitingList.id}`, {state:{deviceListNumber: response?.data?.waitingListNumber, currentList: currentWaitingList, shop: currentShop}})
             // navigate(`/waiting-list-details/${currentWaitingList.id}`)
           }
         },
@@ -101,11 +104,26 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
     }
   }
 
-  console.log({currentWaitingList})
 
   const waitingCount = listNumberDatas?.data.waitingListNumbers.filter((_) => _.status === WaitingListNumberStatus.CREATED)
 
-  console.log({deviceListNumber})
+  // Group consecutive CREATED status numbers
+  const groupedQueue = listNumberDatas?.data.waitingListNumbers.reduce((acc: any[], item) => {
+    if (item.status === WaitingListNumberStatus.CREATED) {
+      // Check if previous item was also CREATED
+      const prevItem = acc.length > 0 ? acc[acc.length - 1] : null
+      if (prevItem && prevItem.status === WaitingListNumberStatus.CREATED && prevItem.isGrouped) {
+        // Add to existing group
+        prevItem.ticketNumber += ` — ${item.value}`
+        return acc
+      } else {
+        // Start new group
+        return [...acc, { ...item, ticketNumber: `N° ${item.value}`, isGrouped: true }]
+      }
+    }
+    // Non-CREATED items remain as is
+    return [...acc, { ...item, ticketNumber: `N° ${item.value}`, isGrouped: false }]
+  }, [])
 
   return (
     <div className="min-h-screen w-full bg-dark-bg lg:h-screen lg:min-h-0">
@@ -134,14 +152,15 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-3 gap-1.5">
-                  <StatCard value={waitingCount?.length} label="En attente" />
+                  <StatCard value={waitingCount?.length} label={waitingCount?.length ? "En attente" : "Non disponible"} />
                   <StatCard
                     value={salonData.avgWaitTime}
                     unit="min"
                     label="Attente moy."
                   />
+                  
                   <StatCard
-                    value={String(currentWaitingList?.current_number).padStart(2, '0')}
+                    value={currentWaitingList?.current_number ? String(currentWaitingList?.current_number).padStart(2, '0') : 'Aucun'}
                     label="N° courant"
                   />
                 </div>
@@ -167,12 +186,12 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
                 <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-2.5">
                   File en direct
                 </p>
-                {listNumberDatas?.data.waitingListNumbers.map((item, index) => (
+                {groupedQueue?.map((item, index) => (
                   <QueueItem
                     key={index}
-                    ticketNumber={item.value}
+                    ticketNumber={item.ticketNumber}
                     status={item.status}
-                    isLast={index === salonData.queue.length - 1}
+                    isLast={index === groupedQueue.length - 1}
                   />
                 ))}
               </div>
