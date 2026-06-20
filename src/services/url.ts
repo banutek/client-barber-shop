@@ -32,3 +32,7 @@ export const waitingListNumberUrls = {
   UPDATE_WAITING_LIST_NUMBER_STATUS: (numberId: string) =>
     `${prefixer}waiting-list-number/status/${numberId}`,
 }
+
+export const statsUrls = {
+  GET_DAILY_STATS: (shopId: string) => `${prefixer}stats/shop/${shopId}/daily`,
+}

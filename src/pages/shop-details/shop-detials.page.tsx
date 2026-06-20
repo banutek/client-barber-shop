@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { BackButton, InfoRow, QueueItem, SalonIdentity, StatCard, StatusBar } from '@/components'
 import { type INewWaitingListNumberDtoIn, ShopOpenStatus, WaitingListNumberStatus } from '@/dto'
 import { useGetShopByIDHook } from '@/hooks/shop'
+import { useDailyStatsHook } from '@/hooks/stats'
 import {
   useCreateNewListNumberHook,
   useGetListNumberByListIdHook,
@@ -20,23 +21,8 @@ export interface IShopDetailsPageProps {
   default_props?: boolean
 }
 
-// Mock data - would come from API in real app
-const salonData = {
-  avgWaitTime: 18,
-  currentNumber: 7,
-  distance: '320 m',
-  hours: '09:00 — 19:00',
-  id: 1,
-  location: 'Maarif, Casablanca',
-  name: 'Salon Baraka',
-  phone: '+212 6 00 11 22 33',
-  queue: [
-    { status: 'in-chair' as const, ticketNumber: 'N° 07' },
-    { status: 'next' as const, ticketNumber: 'N° 08' },
-    { status: 'waiting' as const, ticketNumber: 'N° 09 — 10 — 11' },
-  ],
-  waitingCount: 4,
-}
+// Default hours — would come from shop config in a future backend update
+const DEFAULT_HOURS = '09:00 — 19:00'
 
 export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   const navigate = useNavigate()
@@ -48,6 +34,7 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
 
   const { data } = useGetShopByIDHook(shopId as string)
   const { data: listNumberDatas } = useGetListNumberByListIdHook(currentWaitingList?.id as string)
+  const { data: statsData } = useDailyStatsHook(shopId as string)
   const { mutate: doCreateNewListNumber } = useCreateNewListNumberHook()
   const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find(
     (_) => _.deviceId === currentDevice?.id,
@@ -185,7 +172,11 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
                     label={waitingCount?.length ? 'En attente' : 'Non disponible'}
                     value={waitingCount?.length as number}
                   />
-                  <StatCard label="Attente moy." unit="min" value={salonData.avgWaitTime} />
+                  <StatCard
+                    label="Attente moy."
+                    unit="min"
+                    value={statsData?.data.avgWaitMin ?? 0}
+                  />
 
                   <StatCard
                     label="N° courant"
@@ -200,7 +191,7 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
 
               {/* Info Section */}
               <div className="bg-dark-secondary border border-dark-border rounded-2xl py-3 px-3.5 mx-3 mb-2">
-                <InfoRow icon={Clock} label="Horaires" value={salonData.hours} />
+                <InfoRow icon={Clock} label="Horaires" value={DEFAULT_HOURS} />
                 <InfoRow
                   icon={Phone}
                   isLast

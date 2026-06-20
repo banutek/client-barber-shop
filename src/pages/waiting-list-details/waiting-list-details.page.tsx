@@ -10,6 +10,7 @@ import {
   WaitingListNumberStatus,
 } from '@/dto'
 import { useGetListNumberByListIdHook } from '@/hooks/waiting-list-number'
+import { useDailyStatsHook } from '@/hooks/stats'
 import { useWaitingListNumberStore } from '@/stores'
 
 export interface IWaitingListDetailsPageProps {
@@ -28,11 +29,11 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
   const shop: IBarberShopDtoOut = state?.shop
   // Ticket data (can be passed as props in a real implementation)
   const drawTime = new Date(deviceListNumber?.createdAt).toLocaleTimeString('fr-FR')
-  const estimatedMinutes = 22
-  // const progressPercent = 58
   const salonName = shop?.name
 
   const { data: listNumberDatas } = useGetListNumberByListIdHook(currentList?.id)
+  const { data: statsData } = useDailyStatsHook(shop?.id as string)
+  const estimatedMinutes = statsData?.data.avgServiceMin ?? 0
 
   // Queue data
   // const queueNumbers = [

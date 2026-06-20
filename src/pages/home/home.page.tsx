@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Header, SalonCard, SearchBar, SectionLabel, StatusBar } from '@/components'
+import { Header, SalonCardWithStats, SearchBar, SectionLabel, StatusBar } from '@/components'
 import { useGetActiveShopsHook } from '@/hooks/shop'
 import type { IBarberShopDtoOut } from '@/dto'
 
@@ -12,7 +12,7 @@ export interface IHomePageProps {
 export const HomePage: React.FC<IHomePageProps> = () => {
   const stored: null | string = localStorage.getItem('device_infos')
   console.log({ stored })
-  const { data } = useGetActiveShopsHook(stored)
+  const { data } = useGetActiveShopsHook(stored ?? '')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -43,16 +43,12 @@ export const HomePage: React.FC<IHomePageProps> = () => {
 
               <div className="flex flex-col gap-2 px-4 pb-4">
                 {data?.data.shops.map((salon) => (
-                  <SalonCard
+                  <SalonCardWithStats
                     distance={'320 m'}
                     highlighted={false}
                     key={salon.id}
-                    location={salon.address}
-                    name={salon.name}
                     onClick={() => handleShopSelect(salon)}
-                    status={salon.openStatus}
-                    waitCount={0}
-                    waitTime={'0 min'}
+                    shop={salon}
                   />
                 ))}
               </div>
