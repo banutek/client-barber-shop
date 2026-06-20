@@ -1,10 +1,10 @@
 export interface StatCardProps {
-  value: string | number
-  unit?: string
   label: string
+  unit?: string
+  value: number | string
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ value, unit, label }) => {
+export const StatCard: React.FC<StatCardProps> = ({ label, unit, value }) => {
   return (
     <div className="bg-dark-card rounded-[10px] py-2.5 px-2 text-center">
       <p className="text-xl font-medium text-gold m-0 leading-none">

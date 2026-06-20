@@ -1,50 +1,37 @@
 import React from 'react'
 
-interface StepItemComponentProps {
+interface StepItemComponentProperties {
   icon: React.ReactNode
-  title: string
-  subtitle: string
-  status: 'completed' | 'current' | 'pending'
   isLast?: boolean
+  status: 'completed' | 'current' | 'pending'
+  subtitle: string
+  title: string
 }
 
-export const StepItemComponent: React.FC<StepItemComponentProps> = ({
+export const StepItemComponent: React.FC<StepItemComponentProperties> = ({
   icon,
-  title,
-  subtitle,
-  status,
   isLast = false,
+  status,
+  subtitle,
+  title,
 }) => {
   const iconBgClass =
-    status === 'completed'
-      ? 'bg-success-bg'
-      : status === 'current'
-        ? 'bg-gold-bg'
-        : 'bg-dark-card'
+    status === 'completed' ? 'bg-success-bg' : status === 'current' ? 'bg-gold-bg' : 'bg-dark-card'
 
   const iconColorClass =
-    status === 'completed'
-      ? 'text-success'
-      : status === 'current'
-        ? 'text-gold'
-        : 'text-white/20'
+    status === 'completed' ? 'text-success' : status === 'current' ? 'text-gold' : 'text-white/20'
 
-  const titleColorClass =
-    status === 'pending' ? 'text-white/35' : 'text-text-primary'
+  const titleColorClass = status === 'pending' ? 'text-white/35' : 'text-text-primary'
 
   const subtitleColorClass =
-    status === 'completed'
-      ? 'text-white/35'
-      : status === 'current'
-        ? 'text-white/35'
-        : 'text-white/20'
+    status === 'completed' || status === 'current' ? 'text-white/35' : 'text-white/20'
 
   return (
     <div className={`flex gap-3 relative ${isLast ? '' : 'pb-3'}`}>
       {!isLast && (
         <div
-          className="absolute left-[15px] top-[30px] bottom-0 w-px bg-white/[0.07]"
           aria-hidden="true"
+          className="absolute left-[15px] top-[30px] bottom-0 w-px bg-white/[0.07]"
         />
       )}
       <div
@@ -53,9 +40,7 @@ export const StepItemComponent: React.FC<StepItemComponentProps> = ({
         <span className={iconColorClass}>{icon}</span>
       </div>
       <div>
-        <p className={`text-[13px] font-medium ${titleColorClass} mb-px`}>
-          {title}
-        </p>
+        <p className={`text-[13px] font-medium ${titleColorClass} mb-px`}>{title}</p>
         <p className={`text-[11px] ${subtitleColorClass}`}>{subtitle}</p>
       </div>
     </div>

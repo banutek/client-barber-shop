@@ -1,16 +1,12 @@
-import { Scissors, MapPin } from 'lucide-react'
+import { MapPin, Scissors } from 'lucide-react'
 
 export interface SalonIdentityProps {
-  name: string
-  location: string
   distance: string
+  location: string
+  name: string
 }
 
-export const SalonIdentity: React.FC<SalonIdentityProps> = ({
-  name,
-  location,
-  distance,
-}) => {
+export const SalonIdentity: React.FC<SalonIdentityProps> = ({ distance, location, name }) => {
   return (
     <div className="flex items-center gap-3 mb-3">
       <div className="w-[52px] h-[52px] rounded-[14px] bg-[#25221a] border border-gold-muted flex items-center justify-center flex-shrink-0">

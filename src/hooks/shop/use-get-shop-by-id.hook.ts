@@ -1,15 +1,15 @@
-import { useQuery } from "@tanstack/react-query"
-import type { IBarberShopDtoOut } from "../../dto"
-import type { AxiosResponse } from "axios"
-import { ShopService } from "../../services"
+import { useQuery } from '@tanstack/react-query'
+import { ShopService } from '../../services'
+import type { IBarberShopDtoOut } from '../../dto'
+import type { AxiosResponse } from 'axios'
 
 export const useGetShopByIDHook = (shopId: string) => {
-    return useQuery<AxiosResponse<{ shop: IBarberShopDtoOut }>, Error>({
-        queryKey: ['get-shop-by-id', shopId],
-        queryFn: () => {
-            return ShopService.get_barber_shop_by_id(shopId)
-        },
-        enabled: !!shopId,
-        retry: 0
-    })
+  return useQuery<AxiosResponse<{ shop: IBarberShopDtoOut }>, Error>({
+    enabled: !!shopId,
+    queryFn: () => {
+      return ShopService.get_barber_shop_by_id(shopId)
+    },
+    queryKey: ['get-shop-by-id', shopId],
+    retry: 0,
+  })
 }

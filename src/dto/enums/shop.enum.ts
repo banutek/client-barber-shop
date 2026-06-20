@@ -1,13 +1,12 @@
-export enum WaitingListStatusEnum {
-    OPEN = 'OPEN',
-    CLOSED = 'CLOSED',
-    BREAK = 'BREAK'
-};
-
 export enum ShopOpenStatus {
-    OPEN = 'OPEN',
-    CLOSED = 'CLOSED',
-    BUSY = 'BUSY',
-    BREAK = 'BREAK'
-};
+  BREAK = 'BREAK',
+  BUSY = 'BUSY',
+  CLOSED = 'CLOSED',
+  OPEN = 'OPEN',
+}
 
+export enum WaitingListStatusEnum {
+  BREAK = 'BREAK',
+  CLOSED = 'CLOSED',
+  OPEN = 'OPEN',
+}

@@ -1,10 +1,8 @@
-
 export enum WaitingListNumberStatus {
-    CREATED = 'CREATED',
-    NEXT = 'NEXT',
-    PENDING = 'PENDING',
-    IN_PROGRESS = 'IN_PROGRESS',
-    COMPLETED = 'COMPLETED',
-    JUMPED = 'JUMPED',
+  COMPLETED = 'COMPLETED',
+  CREATED = 'CREATED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  JUMPED = 'JUMPED',
+  NEXT = 'NEXT',
+  PENDING = 'PENDING',
 }
-

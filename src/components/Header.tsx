@@ -1,14 +1,10 @@
 export interface HeaderProps {
   greeting?: string
-  title: string
   highlightWord?: string
+  title: string
 }
 
-export const Header: React.FC<HeaderProps> = ({
-  greeting = 'Bonjour',
-  title,
-  highlightWord,
-}) => {
+export const Header: React.FC<HeaderProps> = ({ greeting = 'Bonjour', highlightWord, title }) => {
   const renderTitle = () => {
     if (!highlightWord) return title
 

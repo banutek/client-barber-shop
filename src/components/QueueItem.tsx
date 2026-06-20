@@ -1,37 +1,37 @@
-import { WaitingListNumberStatus } from "@/dto"
+import { WaitingListNumberStatus } from '@/dto'
+
+export interface QueueItemProps {
+  isLast?: boolean
+  status: WaitingListNumberStatus
+  ticketNumber: string
+}
 
 export type QueueStatus = 'in-chair' | 'next' | 'waiting'
 
-export interface QueueItemProps {
-  ticketNumber: string
-  status: WaitingListNumberStatus
-  isLast?: boolean
-}
-
-const statusConfig: Record<WaitingListNumberStatus, { label: string; className: string }> = {
-  [WaitingListNumberStatus.IN_PROGRESS]: {
-    label: 'En chaise',
-    className: 'text-success bg-success-bg',
-  },
-  [WaitingListNumberStatus.NEXT]: {
-    label: 'Prochain',
-    className: 'text-gold bg-gold/10',
+const statusConfig: Record<WaitingListNumberStatus, { className: string; label: string }> = {
+  [WaitingListNumberStatus.COMPLETED]: {
+    className: 'text-white/50 bg-gold/10',
+    label: 'Terminé',
   },
   [WaitingListNumberStatus.CREATED]: {
+    className: 'text-white/30',
     label: 'En attente',
-    className: 'text-white/30',
   },
-  [WaitingListNumberStatus.PENDING]: {
-    label: 'Présent',
-    className: 'text-white/30',
-  },
-  [WaitingListNumberStatus.COMPLETED]: {
-    label: 'Terminé',
-    className: 'text-white/50 bg-gold/10',
+  [WaitingListNumberStatus.IN_PROGRESS]: {
+    className: 'text-success bg-success-bg',
+    label: 'En chaise',
   },
   [WaitingListNumberStatus.JUMPED]: {
-    label: 'Passé',
     className: 'text-white/30',
+    label: 'Passé',
+  },
+  [WaitingListNumberStatus.NEXT]: {
+    className: 'text-gold bg-gold/10',
+    label: 'Prochain',
+  },
+  [WaitingListNumberStatus.PENDING]: {
+    className: 'text-white/30',
+    label: 'Présent',
   },
 }
 
@@ -50,20 +50,24 @@ const statusConfig: Record<WaitingListNumberStatus, { label: string; className: 
 //   },
 // }
 
-export const QueueItem: React.FC<QueueItemProps> = ({
-  ticketNumber,
-  status,
-  isLast = false,
-}) => {
+export const QueueItem: React.FC<QueueItemProps> = ({ isLast = false, status, ticketNumber }) => {
   const config = statusConfig[status]
 
   return (
     <div
       className={`flex items-center justify-between py-1.5 ${
-        !isLast ? 'border-b border-white/5' : ''
+        isLast ? '' : 'border-b border-white/5'
       }`}
     >
-      <span style={{ fontSize: '12px', color: status === WaitingListNumberStatus.CREATED ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.6)' }}>
+      <span
+        style={{
+          color:
+            status === WaitingListNumberStatus.CREATED
+              ? 'rgba(255,255,255,0.4)'
+              : 'rgba(255,255,255,0.6)',
+          fontSize: '12px',
+        }}
+      >
         {ticketNumber}
       </span>
       <span className={`text-[10px] px-2 py-0.5 rounded-full ${config.className}`}>

@@ -1,17 +1,16 @@
 import React from 'react'
 
-
-interface QueueAvatarComponentProps {
+interface QueueAvatarComponentProperties {
   number: string
+  size?: 'md' | 'sm'
   // status: 'active' | 'waiting' | 'current'
   status: string
-  size?: 'sm' | 'md'
 }
 
-export const QueueAvatarComponent: React.FC<QueueAvatarComponentProps> = ({
+export const QueueAvatarComponent: React.FC<QueueAvatarComponentProperties> = ({
   number,
-  status,
   size = 'sm',
+  status,
 }) => {
   const dimensions = size === 'md' ? 'w-7 h-7' : 'w-[26px] h-[26px]'
   const fontSize = size === 'md' ? 'text-[9px] font-medium' : 'text-[9px]'

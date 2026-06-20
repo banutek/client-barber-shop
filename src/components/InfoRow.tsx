@@ -2,22 +2,15 @@ import type { LucideIcon } from 'lucide-react'
 
 export interface InfoRowProps {
   icon: LucideIcon
+  isLast?: boolean
   label: string
   value: string
-  isLast?: boolean
 }
 
-export const InfoRow: React.FC<InfoRowProps> = ({
-  icon: Icon,
-  label,
-  value,
-  isLast = false,
-}) => {
+export const InfoRow: React.FC<InfoRowProps> = ({ icon: Icon, isLast = false, label, value }) => {
   return (
     <div
-      className={`flex items-center gap-2.5 py-1.5 ${
-        !isLast ? 'border-b border-white/[0.05]' : ''
-      }`}
+      className={`flex items-center gap-2.5 py-1.5 ${isLast ? '' : 'border-b border-white/[0.05]'}`}
     >
       <div className="w-[30px] h-[30px] rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
         <Icon className="w-[14px] h-[14px] text-gold" />

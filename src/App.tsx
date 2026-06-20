@@ -1,17 +1,14 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import { HomePage, ShopDetailsPage, WaitingListDetailsPage } from "./pages"
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { HomePage, ShopDetailsPage, WaitingListDetailsPage } from './pages'
 
-
-function App() {
+export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/shop-details/:shopId" element={<ShopDetailsPage />} />
-        <Route path="/waiting-list-details/:listId" element={<WaitingListDetailsPage />} />
+        <Route element={<HomePage />} path="/" />
+        <Route element={<ShopDetailsPage />} path="/shop-details/:shopId" />
+        <Route element={<WaitingListDetailsPage />} path="/waiting-list-details/:listId" />
       </Routes>
     </Router>
   )
 }
-
-export default App

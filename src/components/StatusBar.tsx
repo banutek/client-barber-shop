@@ -1,4 +1,4 @@
-import { Wifi, BatteryMedium } from 'lucide-react'
+import { BatteryMedium, Wifi } from 'lucide-react'
 
 export const StatusBar: React.FC = () => {
   const currentTime = new Date().toLocaleTimeString('fr-FR', {

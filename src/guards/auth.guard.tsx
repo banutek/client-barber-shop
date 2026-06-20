@@ -1,55 +1,58 @@
 import React, { useEffect } from 'react'
-import type { IDeviceDtoOut, INewDeviceDtoIn } from '../dto'
 import { useCreateNewDeviceHook, useGetDeviceByIDHook } from '../hooks'
 import { useDeviceStore } from '@/stores'
+import type { IDeviceDtoOut, INewDeviceDtoIn } from '../dto'
 
 export interface IAuthGuardProps {
   children: React.ReactNode
 }
 
 export const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
-  const deviceInfoRef = React.useRef<IDeviceDtoOut | null>((() => {
-    const stored = localStorage.getItem('device_infos')
-    return stored ? JSON.parse(stored) : null
-  })())
-  const {currentDevice,  setCurrentDevice } = useDeviceStore()
+  const deviceInfoReference = React.useRef<IDeviceDtoOut | null>(
+    (() => {
+      const stored = localStorage.getItem('device_infos')
+      return stored ? JSON.parse(stored) : null
+    })(),
+  )
+  const { currentDevice, setCurrentDevice } = useDeviceStore()
   const hasCreatedDevice = React.useRef(false)
 
-  const { mutate: doCreateNewDevice} = useCreateNewDeviceHook()
+  const { mutate: doCreateNewDevice } = useCreateNewDeviceHook()
   const { data, isLoading: isGettingDevice } = useGetDeviceByIDHook(currentDevice?.id)
 
   useEffect(() => {
-
-    const deviceInfo = deviceInfoRef.current
+    const deviceInfo = deviceInfoReference.current
     if (deviceInfo) {
       setCurrentDevice(deviceInfo)
     } else if (!hasCreatedDevice.current) {
       hasCreatedDevice.current = true
       const requestBody: INewDeviceDtoIn = {
-        platform: 'web'
+        platform: 'web',
       }
-      console.log({requestBody})
+      console.log({ requestBody })
       doCreateNewDevice(requestBody)
     }
-  },[setCurrentDevice, doCreateNewDevice])
-    
-    useEffect(() => {
-      if (data) {
-        localStorage.setItem('device_infos', JSON.stringify(data?.data.device))
-        setCurrentDevice(data?.data.device)
-      }
-    },[data, setCurrentDevice])
+  }, [setCurrentDevice, doCreateNewDevice])
 
-    console.log({currentDevice})
-    console.log({isGettingDevice})
+  useEffect(() => {
+    if (!data) {
+      return
+    }
 
-  if(isGettingDevice || !currentDevice) {
+    localStorage.setItem('device_infos', JSON.stringify(data?.data.device))
+    setCurrentDevice(data?.data.device)
+  }, [data, setCurrentDevice])
+
+  console.log({ currentDevice })
+  console.log({ isGettingDevice })
+
+  if (isGettingDevice || !currentDevice) {
     return (
       <div className="min-h-screen w-full bg-dark-bg flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-gold/20 border-t-gold rounded-full animate-spin" />
       </div>
     )
   }
-  
+
   return children
 }

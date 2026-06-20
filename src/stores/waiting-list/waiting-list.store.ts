@@ -1,5 +1,5 @@
-import type { IWaitingListDtoOut } from '@/dto'
 import { create } from 'zustand'
+import type { IWaitingListDtoOut } from '@/dto'
 
 type WaitingListStore = {
   currentWaitingList: IWaitingListDtoOut | null

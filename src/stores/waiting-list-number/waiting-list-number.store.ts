@@ -9,5 +9,6 @@ type WaitingListNumberStore = {
 export const useWaitingListNumberStore = create<WaitingListNumberStore>()((set) => ({
   currentWaitingListNumber: [],
 
-  setCurrentWaitingListNumber: (listNumber: IWaitingListNumbersDtoOut[]) => set(() => ({ currentWaitingListNumber: listNumber })),
+  setCurrentWaitingListNumber: (listNumber: IWaitingListNumbersDtoOut[]) =>
+    set(() => ({ currentWaitingListNumber: listNumber })),
 }))

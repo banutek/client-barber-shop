@@ -1,8 +1,8 @@
 import React from 'react'
 
 export interface IBaseProps {
-  default_props?: boolean
   default_method?: () => void
+  default_props?: boolean
 }
 
 export const BasePage: React.FC<IBaseProps> = () => {
