@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Header, SalonCardWithStats, SearchBar, SectionLabel, StatusBar } from '@/components'
 import { useGetActiveShopsHook } from '@/hooks/shop'
@@ -9,11 +9,24 @@ export interface IHomePageProps {
   default_props?: boolean
 }
 
+const matchesSearch = (shop: IBarberShopDtoOut, query: string): boolean => {
+  const q = query.toLowerCase().trim()
+  if (!q) return true
+  return shop.name.toLowerCase().includes(q) || shop.address.toLowerCase().includes(q)
+}
+
 export const HomePage: React.FC<IHomePageProps> = () => {
   const stored: null | string = localStorage.getItem('device_infos')
-  console.log({ stored })
   const { data } = useGetActiveShopsHook(stored ?? '')
   const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const shops = data?.data.shops ?? []
+
+  const filteredShops = useMemo(
+    () => shops.filter((shop) => matchesSearch(shop, searchQuery)),
+    [shops, searchQuery],
+  )
 
   useEffect(() => {
     console.log('data:::::::', data)
@@ -37,12 +50,16 @@ export const HomePage: React.FC<IHomePageProps> = () => {
             <main className="pb-6 flex-1 overflow-y-auto">
               <Header highlightWord="salon" title="Choisissez votre salon" />
 
-              <SearchBar placeholder="Rechercher un salon..." />
+              <SearchBar
+                onChange={setSearchQuery}
+                placeholder="Rechercher un salon..."
+                value={searchQuery}
+              />
 
               <SectionLabel label="Près de vous" />
 
               <div className="flex flex-col gap-2 px-4 pb-4">
-                {data?.data.shops.map((salon) => (
+                {filteredShops.map((salon) => (
                   <SalonCardWithStats
                     distance={'320 m'}
                     highlighted={false}
