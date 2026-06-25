@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Header, SalonCardWithStats, SearchBar, SectionLabel, StatusBar } from '@/components'
+import { Header, SalonCardWithStats, SearchBar, SectionLabel } from '@/components'
 import { useGetActiveShopsHook } from '@/hooks/shop'
 import type { IBarberShopDtoOut } from '@/dto'
 
@@ -45,9 +45,7 @@ export const HomePage: React.FC<IHomePageProps> = () => {
         <div className="lg:h-full lg:rounded-[36px] lg:border-8 lg:border-dark-secondary lg:shadow-2xl lg:overflow-hidden">
           {/* Inner content with proper mobile styling */}
           <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
-            <StatusBar />
-
-            <main className="pb-6 flex-1 overflow-y-auto">
+            <main className="py-6 flex-1 overflow-y-auto">
               <Header highlightWord="salon" title="Choisissez votre salon" />
 
               <SearchBar
