@@ -29,6 +29,11 @@ export default defineConfig({
         short_name: 'client-barber',
         theme_color: '#ffffff',
       },
+      workbox: {
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true
+      },
       registerType: 'autoUpdate',
       srcDir: 'src',
       strategies: 'injectManifest',
