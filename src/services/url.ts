@@ -1,6 +1,7 @@
-export const baseUrl = 'http://127.0.0.1:4200/'
-// export const baseUrl = 'http://172.20.93.64:4200/'
-export const prefixer = 'http://127.0.0.1:4200/api/v1/'
+const API_URL: string = import.meta.env.VITE_API_URL as string
+
+export const baseUrl = API_URL.replace('/api/v1/', '/')
+export const prefixer = API_URL
 
 export const authUrls = {
   LOGIN_USER: `${prefixer}auth/login`,
@@ -35,4 +36,14 @@ export const waitingListNumberUrls = {
 
 export const statsUrls = {
   GET_DAILY_STATS: (shopId: string) => `${prefixer}stats/shop/${shopId}/daily`,
+}
+
+export const notificationUrls = {
+  GET_NOTIFICATIONS_BY_DEVICE: (deviceId: string) => `${prefixer}notification/device/${deviceId}`,
+  UPDATE_NOTIFICATION_STATUS: (notificationId: string) =>
+    `${prefixer}notification/${notificationId}/status`,
+}
+
+export const pushTokenUrls = {
+  REGISTER_PUSH_TOKEN: (deviceId: string) => `${prefixer}device/${deviceId}/push-token`,
 }

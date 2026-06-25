@@ -1,3 +1,5 @@
 export * from './device'
+export * from './notification'
 export * from './shop'
 export * from './stats'
+export * from './waiting-list-number'

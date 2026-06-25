@@ -113,8 +113,12 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
     }
   }
 
-  const waitingCount = listNumberDatas?.data.waitingListNumbers.filter(
-    (_) => _.status === WaitingListNumberStatus.CREATED,
+  const waitingCount = listNumberDatas?.data.waitingListNumbers.filter((_) =>
+    [
+      WaitingListNumberStatus.CREATED,
+      WaitingListNumberStatus.PENDING,
+      WaitingListNumberStatus.NEXT,
+    ].includes(_.status),
   )
 
   // Group consecutive CREATED status numbers
@@ -191,7 +195,11 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
 
               {/* Info Section */}
               <div className="bg-dark-secondary border border-dark-border rounded-2xl py-3 px-3.5 mx-3 mb-2">
-                <InfoRow icon={Clock} label="Horaires" value={DEFAULT_HOURS} />
+                <InfoRow
+                  icon={Clock}
+                  label="Horaires"
+                  value={currentShop?.hours || DEFAULT_HOURS}
+                />
                 <InfoRow
                   icon={Phone}
                   isLast

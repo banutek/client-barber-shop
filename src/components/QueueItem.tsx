@@ -70,8 +70,8 @@ export const QueueItem: React.FC<QueueItemProps> = ({ isLast = false, status, ti
       >
         {ticketNumber}
       </span>
-      <span className={`text-[10px] px-2 py-0.5 rounded-full ${config.className}`}>
-        {config.label}
+      <span className={`text-[10px] px-2 py-0.5 rounded-full ${config?.className}`}>
+        {config?.label}
       </span>
     </div>
   )

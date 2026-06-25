@@ -9,6 +9,8 @@ export interface IBarberShopDtoOut {
   createdAt: Date
   email: string
   id: string
+  hours: string
+  closingTime: string
   isActive: boolean
   latitude: number
   longitude: number
@@ -19,14 +21,4 @@ export interface IBarberShopDtoOut {
   phone: string
   profileImage: string
   updatedAt: Date
-}
-
-export interface INewBarberShopDtoIn {
-  address: string
-  email?: string
-  latitude?: number
-  longitude?: number
-  name: string
-  phone: string
-  profileImage?: File
 }

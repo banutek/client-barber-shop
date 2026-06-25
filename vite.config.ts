@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+      },
       manifest: {
         description: 'Barber Shop Client',
         icons: [
@@ -27,6 +30,8 @@ export default defineConfig({
         theme_color: '#ffffff',
       },
       registerType: 'autoUpdate',
+      srcDir: 'src',
+      strategies: 'injectManifest',
     }),
   ],
   resolve: {
