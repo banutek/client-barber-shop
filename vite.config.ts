@@ -32,7 +32,6 @@ export default defineConfig({
       workbox: {
         cleanupOutdatedCaches: true,
         skipWaiting: true,
-        clientsClaim: true
       },
       registerType: 'autoUpdate',
       srcDir: 'src',
