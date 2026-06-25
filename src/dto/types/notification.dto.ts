@@ -20,5 +20,5 @@ export interface INotificationListDtoOut {
 }
 
 export interface INotificationStatusDtoIn {
-  status: 'READ' | 'DISMISSED'
+  status: NotificationStatus
 }

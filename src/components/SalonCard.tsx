@@ -9,7 +9,7 @@ export interface SalonCardProps {
   location: string
   name: string
   onClick?: () => void
-  status: string
+  status: ShopOpenStatus
   waitCount: number
   waitTime: string
 }
@@ -18,7 +18,15 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const statusConfig = {
+const statusConfig: Record<
+  ShopOpenStatus,
+  { badgeColor: string; dotColor: string; label: string }
+> = {
+  [ShopOpenStatus.BREAK]: {
+    badgeColor: 'text-amber-400 bg-amber-500/10',
+    dotColor: 'bg-amber-500',
+    label: 'Pause',
+  },
   [ShopOpenStatus.BUSY]: {
     badgeColor: 'text-gold bg-gold-bg',
     dotColor: 'bg-gold',
@@ -54,13 +62,13 @@ export const SalonCard: React.FC<SalonCardProps> = ({
         'relative overflow-hidden rounded-2xl p-3.5 cursor-pointer transition-all',
         highlighted
           ? 'bg-dark-card border border-gold-muted'
-          : 'bg-dark-secondary border border-white/[0.06] hover:bg-dark-secondary/80',
+          : 'bg-dark-secondary border border-white/6 hover:bg-dark-secondary/80',
       )}
       onClick={onClick}
     >
       {/* Top gradient line for highlighted card */}
       {highlighted && (
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/30 to-transparent" />
       )}
 
       {/* Main content row */}
@@ -68,20 +76,18 @@ export const SalonCard: React.FC<SalonCardProps> = ({
         {/* Icon */}
         <div
           className={cn(
-            'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border',
-            highlighted ? 'bg-[#25221a] border-gold/20' : 'bg-dark-card border-white/[0.06]',
+            'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border',
+            highlighted ? 'bg-[#25221a] border-gold/20' : 'bg-dark-card border-white/6',
           )}
         >
-          <Scissors
-            className={cn('w-[18px] h-[18px]', highlighted ? 'text-gold' : 'text-white/35')}
-          />
+          <Scissors className={cn('w-4.5 h-4.5', highlighted ? 'text-gold' : 'text-white/35')} />
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-text-primary mb-0.5">{name}</p>
           <p className="text-[11px] text-white/40 flex items-center gap-1">
-            <MapPin className="w-[11px] h-[11px]" />
+            <MapPin className="w-2.75 h-2.75" />
             {location}
           </p>
         </div>
@@ -90,7 +96,7 @@ export const SalonCard: React.FC<SalonCardProps> = ({
         <span
           className={cn(
             'text-[10px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap',
-            highlighted ? 'text-gold bg-gold-bg' : 'text-white/40 bg-white/[0.06]',
+            highlighted ? 'text-gold bg-gold-bg' : 'text-white/40 bg-white/6',
           )}
         >
           {distance}

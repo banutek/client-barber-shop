@@ -6,7 +6,7 @@ export { NotificationList, type NotificationListProps } from './NotificationList
 export { NotificationsProvider, type NotificationsProviderProps } from './NotificationsProvider'
 export { NotificationToast, type NotificationToastProps } from './NotificationToast'
 export { QueueItem, type QueueItemProps, type QueueStatus } from './QueueItem'
-export { SalonCard, type SalonCardProps, type SalonStatus } from './SalonCard'
+export { SalonCard, type SalonCardProps } from './SalonCard'
 export { SalonCardWithStats, type SalonCardWithStatsProps } from './SalonCardWithStats'
 export { SalonIdentity, type SalonIdentityProps } from './SalonIdentity'
 export { SearchBar, type SearchBarProps } from './SearchBar'

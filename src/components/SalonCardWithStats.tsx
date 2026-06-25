@@ -1,6 +1,6 @@
 import { SalonCard } from './SalonCard'
 import { useDailyStatsHook } from '@/hooks/stats'
-import type { IBarberShopDtoOut } from '@/dto'
+import { ShopOpenStatus, type IBarberShopDtoOut } from '@/dto'
 
 export interface SalonCardWithStatsProps {
   distance: string
@@ -27,7 +27,7 @@ export const SalonCardWithStats: React.FC<SalonCardWithStatsProps> = ({
       location={shop.address}
       name={shop.name}
       onClick={onClick}
-      status={shop.openStatus}
+      status={shop.openStatus as ShopOpenStatus}
       waitCount={waitCount}
       waitTime={waitTime}
     />

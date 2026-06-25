@@ -4,7 +4,7 @@ import { NotificationList } from './NotificationList'
 import { NotificationToast } from './NotificationToast'
 import { NotificationService } from '@/services'
 import { useNotificationStore } from '@/stores'
-import type { INotificationDtoOut } from '@/dto'
+import { NotificationStatus, type INotificationDtoOut } from '@/dto'
 
 export const NotificationBell: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -39,7 +39,7 @@ export const NotificationBell: React.FC = () => {
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      await NotificationService.update_status(id, { status: 'READ' })
+      await NotificationService.update_status(id, { status: NotificationStatus.READ })
       markAsRead(id)
     } catch {
       // Optimistic UI: on garde le markAsRead même en cas d'erreur

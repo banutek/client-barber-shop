@@ -18,7 +18,7 @@ export const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
   const hasCreatedDevice = React.useRef(false)
 
   const { mutate: doCreateNewDevice } = useCreateNewDeviceHook()
-  const { data, isLoading: isGettingDevice } = useGetDeviceByIDHook(currentDevice?.id)
+  const { data, isLoading: isGettingDevice } = useGetDeviceByIDHook(currentDevice?.id as string)
 
   useEffect(() => {
     const deviceInfo = deviceInfoReference.current

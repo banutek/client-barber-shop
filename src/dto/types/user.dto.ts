@@ -1,5 +1,7 @@
-import type { RoleEnum } from '../enums'
 import type { IBarberShopDtoOut } from './barber-shop.dto'
+import { RoleEnum } from '../enums'
+
+type Role = (typeof RoleEnum)[keyof typeof RoleEnum]
 
 export interface ILoginUserDtoIn {
   email: string
@@ -19,7 +21,7 @@ export interface INewUserDtoIn {
   lastName: string
   password: string
   phone: string
-  role: RoleEnum
+  role: Role
 }
 
 export interface IUserDtoOut {
@@ -33,7 +35,7 @@ export interface IUserDtoOut {
   manager_barber_shop?: IBarberShopDtoOut
   phone: string
 
-  role: RoleEnum
+  role: Role
   updatedAt: Date
   user_clients_profile?: string
 }
