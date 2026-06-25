@@ -10,8 +10,13 @@ export interface IAuthGuardProps {
 export const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
   const deviceInfoReference = React.useRef<IDeviceDtoOut | null>(
     (() => {
-      const stored = localStorage.getItem('device_infos')
-      return stored ? JSON.parse(stored) : null
+      try {
+        const stored = localStorage.getItem('device_infos')
+        return stored ? (JSON.parse(stored) as IDeviceDtoOut) : null
+      } catch {
+        localStorage.removeItem('device_infos')
+        return null
+      }
     })(),
   )
   const { currentDevice, setCurrentDevice } = useDeviceStore()

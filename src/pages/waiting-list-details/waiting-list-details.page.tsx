@@ -103,7 +103,7 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
   return (
     <div className="w-full min-h-screen bg-dark-bg flex flex-col items-center">
       {/* Mobile Container - mimics the phone frame from the design */}
-      <div className="w-full max-w-[400px] lg:max-w-[480px] bg-dark-bg lg:rounded-[36px] lg:p-3 lg:border-[8px] lg:border-dark-secondary lg:shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
+      <div className="w-full max-w-100 lg:max-w-120 bg-dark-bg lg:rounded-[36px] lg:p-3 lg:border-8 lg:border-dark-secondary lg:shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
         {/* Main Content */}
         <div className="px-4 pb-4">
           {/* Section Label */}
@@ -113,7 +113,7 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
           <div className="relative bg-[#141418] border border-gold/20 rounded-[20px] p-5 text-center mb-2.5 overflow-hidden">
             {/* Glow Effect */}
             <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140px] h-[140px] rounded-full pointer-events-none"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-35 h-35 rounded-full pointer-events-none"
               style={{
                 background: 'radial-gradient(circle, rgba(212,168,83,0.08) 0%, transparent 70%)',
               }}
