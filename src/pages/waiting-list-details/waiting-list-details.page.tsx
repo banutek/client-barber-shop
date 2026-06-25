@@ -1,7 +1,7 @@
 import { Bell, Camera, Check, Clock, Home, QrCode, Scissors, User } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { SectionLabel, StatusBar } from '../../components'
+import { SectionLabel } from '../../components'
 import { NavItemComponent, QueueAvatarComponent, StepItemComponent } from './childrens'
 import {
   type IBarberShopDtoOut,
@@ -104,9 +104,6 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
     <div className="w-full min-h-screen bg-dark-bg flex flex-col items-center">
       {/* Mobile Container - mimics the phone frame from the design */}
       <div className="w-full max-w-[400px] lg:max-w-[480px] bg-dark-bg lg:rounded-[36px] lg:p-3 lg:border-[8px] lg:border-dark-secondary lg:shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
-        {/* Status Bar */}
-        <StatusBar />
-
         {/* Main Content */}
         <div className="px-4 pb-4">
           {/* Section Label */}

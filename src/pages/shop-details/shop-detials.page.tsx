@@ -1,7 +1,7 @@
 import { Clock, Phone, Ticket } from 'lucide-react'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BackButton, InfoRow, QueueItem, SalonIdentity, StatCard, StatusBar } from '@/components'
+import { BackButton, InfoRow, QueueItem, SalonIdentity, StatCard } from '@/components'
 import { type INewWaitingListNumberDtoIn, ShopOpenStatus, WaitingListNumberStatus } from '@/dto'
 import { useGetShopByIDHook } from '@/hooks/shop'
 import { useDailyStatsHook } from '@/hooks/stats'
@@ -153,8 +153,6 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
         <div className="lg:h-full lg:rounded-[36px] lg:border-8 lg:border-dark-secondary lg:shadow-2xl lg:overflow-hidden">
           {/* Inner content with proper mobile styling */}
           <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
-            <StatusBar />
-
             <main className="flex-1 overflow-y-auto">
               {/* Hero Section */}
               <div className="bg-[#141418] rounded-[20px] p-4 mx-3 mt-0 mb-2.5 relative overflow-hidden">
