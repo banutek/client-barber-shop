@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BackButton, InfoRow, QueueItem, SalonIdentity, StatCard } from '@/components'
 import { type INewWaitingListNumberDtoIn, ShopOpenStatus, WaitingListNumberStatus } from '@/dto'
+import { prefixer } from '@/services/url'
 import { useGetShopByIDHook } from '@/hooks/shop'
 import { useDailyStatsHook } from '@/hooks/stats'
 import {
@@ -155,22 +156,35 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
           <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
             <main className="flex-1 overflow-y-auto">
               {/* Hero Section */}
-              <div className="bg-[#141418] rounded-[20px] p-4 mx-3 mt-0 mb-2.5 relative overflow-hidden">
+              <div
+                className="rounded-[20px] p-4 mx-3 mt-0 mb-2.5 relative overflow-hidden bg-[#141418] bg-cover bg-center"
+                style={
+                  currentShop?.profileImage
+                    ? {
+                        backgroundImage: `url(${prefixer.replace(/\/api\/v1\/?$/, '')}${currentShop.profileImage})`,
+                      }
+                    : undefined
+                }
+              >
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-[#141418]/80" />
                 {/* Back Button */}
-                <div className="mb-4">
+                <div className="relative z-10 mb-4">
                   <BackButton label="Salons" onClick={() => navigate('/')} />
                 </div>
 
                 {/* Salon Identity */}
-                <SalonIdentity
-                  location={currentShop?.address as string}
-                  name={currentShop?.name as string}
-                  shopLat={currentShop?.latitude}
-                  shopLng={currentShop?.longitude}
-                />
+                <div className="relative z-10">
+                  <SalonIdentity
+                    location={currentShop?.address as string}
+                    name={currentShop?.name as string}
+                    shopLat={currentShop?.latitude}
+                    shopLng={currentShop?.longitude}
+                  />
+                </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-3 gap-1.5">
+                <div className="relative z-10 grid grid-cols-3 gap-1.5">
                   <StatCard
                     label={waitingCount?.length ? 'En attente' : 'Non disponible'}
                     value={waitingCount?.length as number}

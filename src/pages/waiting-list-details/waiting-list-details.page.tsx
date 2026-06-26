@@ -1,7 +1,7 @@
 import { Bell, Camera, Check, Clock, Home, QrCode, Scissors, User } from 'lucide-react'
 import React, { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { SectionLabel } from '../../components'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { BackButton } from '../../components'
 import { NavItemComponent, QueueAvatarComponent, StepItemComponent } from './childrens'
 import {
   type IBarberShopDtoOut,
@@ -20,6 +20,7 @@ export interface IWaitingListDetailsPageProps {
 
 export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = () => {
   const { state } = useLocation()
+  const navigate = useNavigate()
   const { COMPLETED, CREATED, IN_PROGRESS, JUMPED, NEXT, PENDING } = WaitingListNumberStatus
   // const { currentShop } = useShopStore()
   const { currentWaitingListNumber, setCurrentWaitingListNumber } = useWaitingListNumberStore()
@@ -106,8 +107,10 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
       <div className="w-full max-w-100 lg:max-w-120 bg-dark-bg lg:rounded-[36px] lg:p-3 lg:border-8 lg:border-dark-secondary lg:shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
         {/* Main Content */}
         <div className="px-4 pb-4">
-          {/* Section Label */}
-          <SectionLabel label={salonName} />
+          {/* Back Button */}
+          <div className="mb-4">
+            <BackButton label={salonName} onClick={() => navigate(-1)} />
+          </div>
 
           {/* Hero - Ticket Number */}
           <div className="relative bg-[#141418] border border-gold/20 rounded-[20px] p-5 text-center mb-2.5 overflow-hidden">
