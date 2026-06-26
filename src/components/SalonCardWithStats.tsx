@@ -3,7 +3,8 @@ import { useDailyStatsHook } from '@/hooks/stats'
 import { ShopOpenStatus, type IBarberShopDtoOut } from '@/dto'
 
 export interface SalonCardWithStatsProps {
-  distance: string
+  /** Fallback distance string, ignored when shop has lat/lng */
+  distance?: string
   highlighted?: boolean
   onClick?: () => void
   shop: IBarberShopDtoOut
@@ -27,6 +28,8 @@ export const SalonCardWithStats: React.FC<SalonCardWithStatsProps> = ({
       location={shop.address}
       name={shop.name}
       onClick={onClick}
+      shopLat={shop.latitude}
+      shopLng={shop.longitude}
       status={shop.openStatus as ShopOpenStatus}
       waitCount={waitCount}
       waitTime={waitTime}

@@ -163,9 +163,10 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
 
                 {/* Salon Identity */}
                 <SalonIdentity
-                  distance={'322 m'}
                   location={currentShop?.address as string}
                   name={currentShop?.name as string}
+                  shopLat={currentShop?.latitude}
+                  shopLng={currentShop?.longitude}
                 />
 
                 {/* Stats Row */}

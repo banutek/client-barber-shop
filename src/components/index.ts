@@ -1,4 +1,5 @@
 export { BackButton, type BackButtonProps } from './BackButton'
+export { GeolocationProvider } from './GeolocationProvider'
 export { Header, type HeaderProps } from './Header'
 export { InfoRow, type InfoRowProps } from './InfoRow'
 export { NotificationBell } from './NotificationBell'

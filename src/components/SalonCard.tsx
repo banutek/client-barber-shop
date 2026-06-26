@@ -1,14 +1,22 @@
 import { type ClassValue, clsx } from 'clsx'
+import { useMemo } from 'react'
 import { MapPin, Scissors } from 'lucide-react'
 import { twMerge } from 'tailwind-merge'
 import { ShopOpenStatus } from '@/dto'
+import { useGeoStore } from '@/stores/geo'
+import { haversineDistance, formatDistance } from '@/utils/geo'
 
 export interface SalonCardProps {
-  distance: string
+  /** Fallback distance string (e.g. "320 m"). Ignored when shopLat & shopLng are provided */
+  distance?: string
   highlighted?: boolean
   location: string
   name: string
   onClick?: () => void
+  /** Shop latitude for live distance */
+  shopLat?: number | null
+  /** Shop longitude for live distance */
+  shopLng?: number | null
   status: ShopOpenStatus
   waitCount: number
   waitTime: string
@@ -45,16 +53,28 @@ const statusConfig: Record<
 }
 
 export const SalonCard: React.FC<SalonCardProps> = ({
-  distance,
+  distance: fallbackDistance,
   highlighted = false,
   location,
   name,
   onClick,
+  shopLat,
+  shopLng,
   status,
   waitCount,
   waitTime,
 }) => {
   const config = statusConfig[status]
+  const geoLat = useGeoStore((s) => s.lat)
+  const geoLng = useGeoStore((s) => s.lng)
+
+  const displayDistance = useMemo(() => {
+    if (shopLat != null && shopLng != null && geoLat != null && geoLng != null) {
+      const meters = haversineDistance(geoLat, geoLng, shopLat, shopLng)
+      return formatDistance(meters)
+    }
+    return fallbackDistance ?? ''
+  }, [shopLat, shopLng, geoLat, geoLng, fallbackDistance])
 
   return (
     <div
@@ -99,7 +119,7 @@ export const SalonCard: React.FC<SalonCardProps> = ({
             highlighted ? 'text-gold bg-gold-bg' : 'text-white/40 bg-white/6',
           )}
         >
-          {distance}
+          {displayDistance}
         </span>
       </div>
 
