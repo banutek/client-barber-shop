@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge'
 import { ShopOpenStatus } from '@/dto'
 import { useGeoStore } from '@/stores/geo'
 import { haversineDistance, formatDistance } from '@/utils/geo'
+import { truncateAtNthComma } from '@/utils/string'
 
 export interface SalonCardProps {
   /** Fallback distance string (e.g. "320 m"). Ignored when shopLat & shopLng are provided */
@@ -68,6 +69,8 @@ export const SalonCard: React.FC<SalonCardProps> = ({
   const geoLat = useGeoStore((s) => s.lat)
   const geoLng = useGeoStore((s) => s.lng)
 
+  const shortLocation = useMemo(() => truncateAtNthComma(location, 2), [location])
+
   const displayDistance = useMemo(() => {
     if (shopLat != null && shopLng != null && geoLat != null && geoLng != null) {
       const meters = haversineDistance(geoLat, geoLng, shopLat, shopLng)
@@ -108,7 +111,7 @@ export const SalonCard: React.FC<SalonCardProps> = ({
           <p className="text-sm font-medium text-text-primary mb-0.5">{name}</p>
           <p className="text-[11px] text-white/40 flex items-center gap-1">
             <MapPin className="w-2.75 h-2.75" />
-            {location}
+            {shortLocation}
           </p>
         </div>
 

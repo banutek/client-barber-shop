@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { MapPin, Scissors } from 'lucide-react'
 import { useGeoStore } from '@/stores/geo'
 import { haversineDistance, formatDistance } from '@/utils/geo'
+import { truncateAtNthComma } from '@/utils/string'
 
 export interface SalonIdentityProps {
   /** Fallback distance string (e.g. "322 m"). Ignored when shopLat & shopLng are provided */
@@ -12,19 +13,6 @@ export interface SalonIdentityProps {
   shopLat?: number | null
   /** Shop longitude */
   shopLng?: number | null
-}
-
-const truncateAtNthComma = (str: string, n: number): string => {
-  let count = 0
-  for (let i = 0; i < str?.length; i++) {
-    if (str[i] === ',') {
-      count++
-      if (count === n) {
-        return str.slice(0, i)
-      }
-    }
-  }
-  return str
 }
 
 export const SalonIdentity: React.FC<SalonIdentityProps> = ({
