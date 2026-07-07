@@ -3,11 +3,12 @@ import type { IWaitingListDtoOut } from '@/dto'
 
 type WaitingListStore = {
   currentWaitingList: IWaitingListDtoOut | null
-  setCurrentWaitingList: (shop: IWaitingListDtoOut) => void
+  setCurrentWaitingList: (shop: IWaitingListDtoOut | null) => void
 }
 
 export const useWaitingListStore = create<WaitingListStore>()((set) => ({
   currentWaitingList: null,
 
-  setCurrentWaitingList: (list: IWaitingListDtoOut) => set(() => ({ currentWaitingList: list })),
+  setCurrentWaitingList: (list: IWaitingListDtoOut | null) =>
+    set(() => ({ currentWaitingList: list })),
 }))

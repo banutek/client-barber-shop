@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Header, SalonCardWithStats, SearchBar, SectionLabel } from '@/components'
 import { useGetActiveShopsHook } from '@/hooks/shop'
+import { useGlobalBarberShopSocket } from '@/hooks/socket'
 import type { IBarberShopDtoOut } from '@/dto'
 
 export interface IHomePageProps {
@@ -20,6 +21,9 @@ export const HomePage: React.FC<IHomePageProps> = () => {
   const { data } = useGetActiveShopsHook(stored ?? '')
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
+
+  // WebSocket global pour nouveaux shops
+  useGlobalBarberShopSocket()
 
   const shops = data?.data.shops ?? []
 

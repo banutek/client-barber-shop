@@ -40,7 +40,7 @@ self.addEventListener('push', (event: Event) => {
     data: { url: data.url },
     icon: data.icon || '/pwa-192x192.png',
     vibrate: [200, 100, 200],
-  })
+  } as NotificationOptions & { vibrate?: number[] })
 
   pushEvent.waitUntil(promiseChain)
 })

@@ -10,6 +10,7 @@ import {
   useCreateNewListNumberHook,
   useGetListNumberByListIdHook,
 } from '@/hooks/waiting-list-number'
+import { useBarberShopSocket, useWaitingListNumberSocket } from '@/hooks/socket'
 import {
   useDeviceStore,
   useShopStore,
@@ -37,6 +38,10 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   const { data: listNumberDatas } = useGetListNumberByListIdHook(currentWaitingList?.id as string)
   const { data: statsData } = useDailyStatsHook(shopId as string)
   const { mutate: doCreateNewListNumber } = useCreateNewListNumberHook()
+
+  // WebSocket temps réel pour la waiting list de ce shop
+  useBarberShopSocket(shopId as string)
+  useWaitingListNumberSocket(currentWaitingList?.id)
   const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find(
     (_) => _.deviceId === currentDevice?.id,
   )
@@ -77,7 +82,7 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
       navigate(`/waiting-list-details/${deviceListNumber.waitingListId}`, {
         state: {
           currentList: currentWaitingList,
-          deviceListNumber,
+          // deviceListNumber,
           shop: currentShop,
         },
       })
