@@ -8,7 +8,6 @@ type DeviceStore = {
 
 export const useDeviceStore = create<DeviceStore>()((set) => ({
   currentDevice: null,
-  currentWaitingList: null,
 
   setCurrentDevice: (shop: IDeviceDtoOut | null) => set(() => ({ currentDevice: shop })),
 }))

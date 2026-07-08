@@ -7,6 +7,12 @@ export const NotificationService = {
     BaseMethods.getRequest(notificationUrls.GET_NOTIFICATIONS_BY_DEVICE(deviceId), false),
 
   /**
+   * Récupère la clé publique VAPID auprès du backend.
+   * Le backend expose GET /notification/vapid-public-key → { publicKey: string }
+   */
+  get_vapid_public_key: () => BaseMethods.getRequest(notificationUrls.GET_VAPID_PUBLIC_KEY, false),
+
+  /**
    * Envoie le push_token au backend.
    * pushToken = JSON.stringify(PushSubscription.toJSON())
    * → le backend le stocke dans Device.push_token pour webpush.sendNotification().

@@ -25,6 +25,10 @@ const statusConfig: Record<WaitingListNumberStatus, { className: string; label: 
     className: 'text-white/30',
     label: 'Passé',
   },
+  [WaitingListNumberStatus.MISSING]: {
+    className: 'text-red-400/70',
+    label: 'Absent',
+  },
   [WaitingListNumberStatus.NEXT]: {
     className: 'text-gold bg-gold/10',
     label: 'Prochain',

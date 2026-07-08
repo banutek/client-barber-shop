@@ -40,6 +40,7 @@ export const statsUrls = {
 
 export const notificationUrls = {
   GET_NOTIFICATIONS_BY_DEVICE: (deviceId: string) => `${prefixer}notification/device/${deviceId}`,
+  GET_VAPID_PUBLIC_KEY: `${prefixer}notification/vapid-public-key`,
   UPDATE_NOTIFICATION_STATUS: (notificationId: string) =>
     `${prefixer}notification/${notificationId}/status`,
 }

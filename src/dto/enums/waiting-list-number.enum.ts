@@ -3,6 +3,7 @@ export enum WaitingListNumberStatus {
   CREATED = 'CREATED',
   IN_PROGRESS = 'IN_PROGRESS',
   JUMPED = 'JUMPED',
+  MISSING = 'MISSING',
   NEXT = 'NEXT',
   PENDING = 'PENDING',
 }

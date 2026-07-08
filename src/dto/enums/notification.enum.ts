@@ -1,7 +1,8 @@
 export enum NotificationType {
-  INFO = 'INFO',
   REMINDER = 'REMINDER',
-  STATUS_CHANGE = 'STATUS_CHANGE',
+  SKIPED = 'SKIPED',
+  TURN_CALLING = 'TURN_CALLING',
+  TURN_COMING_SOON = 'TURN_COMING_SOON',
 }
 
 export enum NotificationStatus {

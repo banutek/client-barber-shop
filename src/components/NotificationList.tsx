@@ -9,15 +9,17 @@ export interface NotificationListProps {
 }
 
 const typeLabels: Record<NotificationType, string> = {
-  [NotificationType.INFO]: 'Info',
   [NotificationType.REMINDER]: 'Rappel',
-  [NotificationType.STATUS_CHANGE]: 'Statut',
+  [NotificationType.SKIPED]: 'Sauté',
+  [NotificationType.TURN_CALLING]: 'Appelé',
+  [NotificationType.TURN_COMING_SOON]: 'Bientôt',
 }
 
 const typeColors: Record<NotificationType, string> = {
-  [NotificationType.INFO]: 'border-l-gray-400',
   [NotificationType.REMINDER]: 'border-l-blue-400',
-  [NotificationType.STATUS_CHANGE]: 'border-l-amber-400',
+  [NotificationType.SKIPED]: 'border-l-red-400',
+  [NotificationType.TURN_CALLING]: 'border-l-green-400',
+  [NotificationType.TURN_COMING_SOON]: 'border-l-amber-400',
 }
 
 export const NotificationList: React.FC<NotificationListProps> = ({

@@ -3,14 +3,9 @@ import { NotificationService } from '@/services'
 import type { AxiosResponse } from 'axios'
 
 /**
- * VAPID public key — issue de la variable d'environnement VITE_VAPID_PUBLIC_KEY.
- * Le backend utilise la clé privée correspondante (VAPID_PRIVATE_KEY) pour signer.
- *
- * Génération d'une paire de clés (côté backend) :
- *   npx web-push generate-vapid-keys
+ * Récupère la clé publique VAPID depuis le backend (GET /notification/vapid-public-key)
+ * puis s'abonne au PushManager. La clé est dynamique — plus besoin de variable d'env.
  */
-const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string
-
 async function subscribeUserToPush(): Promise<null | PushSubscription> {
   const registration = await navigator.serviceWorker.ready
   const existingSubscription = await registration.pushManager.getSubscription()
@@ -18,7 +13,15 @@ async function subscribeUserToPush(): Promise<null | PushSubscription> {
     return existingSubscription
   }
 
-  const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+  // Récupère la clé publique VAPID auprès du backend
+  const vapidRes = await NotificationService.get_vapid_public_key()
+  const publicKey = (vapidRes.data as { publicKey?: string })?.publicKey
+  if (!publicKey) {
+    console.warn('[Push] Clé VAPID non configurée côté serveur')
+    throw new Error('VAPID public key indisponible')
+  }
+
+  const convertedVapidKey = urlBase64ToUint8Array(publicKey)
   return registration.pushManager.subscribe({
     applicationServerKey: convertedVapidKey as BufferSource,
     userVisibleOnly: true,
