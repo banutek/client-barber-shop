@@ -1,6 +1,7 @@
 export * from './device'
 export * from './geo'
 export * from './notification'
+export * from './proximity'
 export * from './shop'
 export * from './socket'
 export * from './stats'

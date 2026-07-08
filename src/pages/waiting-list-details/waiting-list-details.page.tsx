@@ -1,5 +1,5 @@
-import { Check, Clock, QrCode, Scissors } from 'lucide-react'
-import React, { useEffect } from 'react'
+import { Check, Clock, QrCode, Scissors, X } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { BackButton } from '../../components'
 import { QueueAvatarComponent, StepItemComponent } from './childrens'
@@ -9,7 +9,11 @@ import {
   type IWaitingListNumbersDtoOut,
   WaitingListNumberStatus,
 } from '@/dto'
-import { useGetListNumberByListIdHook } from '@/hooks/waiting-list-number'
+import {
+  useGetListNumberByListIdHook,
+  useUpdateWaitingListNumberStatusHook,
+} from '@/hooks/waiting-list-number'
+import { useProximityArrival } from '@/hooks/proximity'
 import { useDailyStatsHook } from '@/hooks/stats'
 import { useBarberShopSocket, useWaitingListNumberSocket } from '@/hooks/socket'
 import { useDeviceStore, useWaitingListNumberStore } from '@/stores'
@@ -36,13 +40,40 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
   const { data: listNumberDatas } = useGetListNumberByListIdHook(currentList?.id)
   const { data: statsData } = useDailyStatsHook(shop?.id as string)
 
-  // WebSocket temps réel pour les numbers de cette waiting list
-  useWaitingListNumberSocket(currentList?.id)
-  useBarberShopSocket(shop?.id as string)
+  const { mutate: doUpdateStatus } = useUpdateWaitingListNumberStatusHook()
+
+  // Toast de bienvenue local
+  const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null)
+
   const estimatedMinutes = statsData?.data.avgServiceMin ?? 0
   const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find(
     (_) => _.deviceId === currentDevice?.id,
   )
+
+  // WebSocket temps réel pour les numbers de cette waiting list
+  useWaitingListNumberSocket(currentList?.id)
+  useBarberShopSocket(shop?.id as string)
+
+  // Proximité : détection d'arrivée à 10m du salon
+  useProximityArrival({
+    shopLat: shop?.latitude,
+    shopLng: shop?.longitude,
+    deviceListNumber,
+    onArrival: (status) => {
+      if (status === WaitingListNumberStatus.CREATED) {
+        doUpdateStatus(
+          { numberId: deviceListNumber!.id, status: WaitingListNumberStatus.PENDING },
+          {
+            onSuccess: () => {
+              setWelcomeMessage('Bienvenue au salon ! Votre numéro est confirmé.')
+            },
+          },
+        )
+      } else if (status === WaitingListNumberStatus.NEXT) {
+        setWelcomeMessage("Bienvenue au salon ! C'est bientôt votre tour.")
+      }
+    },
+  })
   const drawTime = deviceListNumber
     ? new Date(deviceListNumber?.createdAt).toLocaleTimeString('fr-FR')
     : ''
@@ -123,6 +154,27 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
           {/* Inner content with proper mobile styling */}
           <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
             <main className="flex-1 overflow-y-auto px-4 pb-4">
+              {/* Welcome Toast */}
+              {welcomeMessage && (
+                <div className="fixed top-4 right-4 z-100 animate-slide-in">
+                  <div className="flex items-start gap-3 bg-dark-card border border-gold/20 rounded-xl shadow-2xl p-4 max-w-sm backdrop-blur-xl">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-medium text-gold uppercase tracking-wide mb-1">
+                        Bienvenue
+                      </p>
+                      <p className="text-[13px] text-white/85 leading-snug">{welcomeMessage}</p>
+                    </div>
+                    <button
+                      className="shrink-0 p-1 text-white/30 hover:text-white/70 transition-colors"
+                      onClick={() => setWelcomeMessage(null)}
+                      type="button"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Back Button */}
               <div className="my-4">
                 <BackButton label={salonName} onClick={() => navigate(-1)} />

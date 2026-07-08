@@ -1,5 +1,5 @@
-import { Clock, Phone, Ticket } from 'lucide-react'
-import { useEffect } from 'react'
+import { Clock, Phone, Ticket, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BackButton, InfoRow, QueueItem, SalonIdentity, StatCard } from '@/components'
 import { type INewWaitingListNumberDtoIn, ShopOpenStatus, WaitingListNumberStatus } from '@/dto'
@@ -9,7 +9,9 @@ import { useDailyStatsHook } from '@/hooks/stats'
 import {
   useCreateNewListNumberHook,
   useGetListNumberByListIdHook,
+  useUpdateWaitingListNumberStatusHook,
 } from '@/hooks/waiting-list-number'
+import { useProximityArrival } from '@/hooks/proximity'
 import { useBarberShopSocket, useWaitingListNumberSocket } from '@/hooks/socket'
 import {
   useDeviceStore,
@@ -38,13 +40,41 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   const { data: listNumberDatas } = useGetListNumberByListIdHook(currentWaitingList?.id as string)
   const { data: statsData } = useDailyStatsHook(shopId as string)
   const { mutate: doCreateNewListNumber } = useCreateNewListNumberHook()
+  const { mutate: doUpdateStatus } = useUpdateWaitingListNumberStatusHook()
+
+  // Toast de bienvenue local
+  const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null)
+
+  const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find(
+    (_) => _.deviceId === currentDevice?.id,
+  )
 
   // WebSocket temps réel pour la waiting list de ce shop
   useBarberShopSocket(shopId as string)
   useWaitingListNumberSocket(currentWaitingList?.id)
-  const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find(
-    (_) => _.deviceId === currentDevice?.id,
-  )
+
+  // Proximité : détection d'arrivée à 10m du salon
+  useProximityArrival({
+    shopLat: currentShop?.latitude,
+    shopLng: currentShop?.longitude,
+    deviceListNumber,
+    onArrival: (status) => {
+      if (status === WaitingListNumberStatus.CREATED) {
+        doUpdateStatus(
+          { numberId: deviceListNumber!.id, status: WaitingListNumberStatus.PENDING },
+          {
+            onSuccess: () => {
+              setWelcomeMessage(
+                'Bienvenue au salon ! Installez-vous confortablement en attendant votre tour.',
+              )
+            },
+          },
+        )
+      } else if (status === WaitingListNumberStatus.NEXT) {
+        setWelcomeMessage("Bienvenue au salon ! C'est bientôt votre tour.")
+      }
+    },
+  })
 
   const isOpen = currentShop?.openStatus === ShopOpenStatus.OPEN
 
@@ -160,6 +190,27 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
           {/* Inner content with proper mobile styling */}
           <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
             <main className="flex-1 overflow-y-auto">
+              {/* Welcome Toast */}
+              {welcomeMessage && (
+                <div className="fixed top-4 right-4 z-100 animate-slide-in">
+                  <div className="flex items-start gap-3 bg-dark-card border border-gold/20 rounded-xl shadow-2xl p-4 max-w-sm backdrop-blur-xl">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-medium text-gold uppercase tracking-wide mb-1">
+                        Bienvenue
+                      </p>
+                      <p className="text-[13px] text-white/85 leading-snug">{welcomeMessage}</p>
+                    </div>
+                    <button
+                      className="shrink-0 p-1 text-white/30 hover:text-white/70 transition-colors"
+                      onClick={() => setWelcomeMessage(null)}
+                      type="button"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Hero Section */}
               <div
                 className="rounded-[20px] p-4 mx-3 mt-0 mb-2.5 relative overflow-hidden bg-[#141418] bg-cover bg-center"
