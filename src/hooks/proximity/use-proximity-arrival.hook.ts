@@ -5,7 +5,7 @@ import { WaitingListNumberStatus } from '@/dto/enums'
 import type { IWaitingListNumbersDtoOut } from '@/dto'
 
 /** Distance seuil en mètres pour considérer le client "arrivé" au salon */
-const PROXIMITY_THRESHOLD_M = 10
+const PROXIMITY_THRESHOLD_M = 50
 
 export interface UseProximityArrivalOptions {
   /** Latitude du salon */
