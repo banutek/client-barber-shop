@@ -48,3 +48,7 @@ export const notificationUrls = {
 export const pushTokenUrls = {
   REGISTER_PUSH_TOKEN: (deviceId: string) => `${prefixer}device/${deviceId}/push-token`,
 }
+
+export const scanUrls = {
+  SERVE_BY_BARCODE: `${prefixer}waiting-list-number/serve-by-barcode`,
+}

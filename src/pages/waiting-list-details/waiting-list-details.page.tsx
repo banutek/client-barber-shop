@@ -1,7 +1,9 @@
-import { Check, Clock, QrCode, Scissors, X } from 'lucide-react'
+import { Camera, Check, Clock, QrCode, Scissors, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { BackButton } from '../../components'
+import { QrScanner } from '../../components/qr-scanner/qr-scanner.component'
 import { QueueAvatarComponent, StepItemComponent } from './childrens'
 import {
   type IBarberShopDtoOut,
@@ -26,7 +28,9 @@ export interface IWaitingListDetailsPageProps {
 export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = () => {
   const { state } = useLocation()
   const navigate = useNavigate()
-  const { COMPLETED, CREATED, IN_PROGRESS, JUMPED, NEXT, PENDING } = WaitingListNumberStatus
+  const queryClient = useQueryClient()
+  const { COMPLETED, CREATED, IN_PROGRESS, JUMPED, MISSING, NEXT, PENDING } =
+    WaitingListNumberStatus
   // const { currentShop } = useShopStore()
   const { currentWaitingListNumber, setCurrentWaitingListNumber } = useWaitingListNumberStore()
   const { currentDevice } = useDeviceStore()
@@ -44,6 +48,12 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
 
   // Toast de bienvenue local
   const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null)
+  // Scanner QR code
+  const [showScanner, setShowScanner] = useState(false)
+  const [scanMessage, setScanMessage] = useState<{
+    text: string
+    type: 'success' | 'error'
+  } | null>(null)
 
   const estimatedMinutes = statsData?.data.avgServiceMin ?? 0
   const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find(
@@ -144,6 +154,31 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
   console.log({ queueNumbers })
   console.log({ currentWaitingListNumber })
   console.log({ deviceListNumber })
+
+  // Le bouton scan est actif uniquement quand le numéro qui précède le client est COMPLETED / JUMPED / MISSING
+  // et que le client n'est pas déjà en cours de service ou déjà servi
+  const canScan = (() => {
+    if (!deviceListNumber || currentWaitingListNumber.length === 0) return false
+
+    // Déjà en cours ou déjà servi → pas de scan
+    if (
+      [IN_PROGRESS, COMPLETED].includes(deviceListNumber.status as WaitingListNumberStatus)
+    )
+      return false
+
+    // Trier par valeur pour obtenir l'ordre de la file
+    const sorted = [...currentWaitingListNumber].sort((a, b) => a.value.localeCompare(b.value))
+
+    const myIndex = sorted.findIndex((n) => n.id === deviceListNumber.id)
+    if (myIndex === -1) return false
+
+    // Premier de la file : peut scanner directement
+    if (myIndex === 0) return true
+
+    // Vérifier le numéro qui précède immédiatement le client
+    const previousNumber = sorted[myIndex - 1]
+    return [COMPLETED, JUMPED, MISSING].includes(previousNumber.status as WaitingListNumberStatus)
+  })()
 
   return (
     <div className="min-h-screen w-full bg-dark-bg lg:h-screen lg:min-h-0">
@@ -252,6 +287,66 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
                   )
                 )}
               </div>
+
+              {/* Bouton Scanner QR Code */}
+              <button
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 mb-2 ${
+                  canScan
+                    ? 'bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white cursor-pointer'
+                    : 'bg-dark-card border border-dark-border text-white/25 cursor-not-allowed'
+                }`}
+                disabled={!canScan}
+                onClick={() => setShowScanner(true)}
+                type="button"
+              >
+                <Camera className="w-4 h-4" />
+                {canScan
+                  ? 'Scanner le QR code du coiffeur'
+                  : 'Scan indisponible — attendez votre tour'}
+              </button>
+
+              {/* Scanner Modal */}
+              {showScanner && (
+                <QrScanner
+                  onClose={() => setShowScanner(false)}
+                  onError={(msg) => {
+                    setScanMessage({ text: msg, type: 'error' })
+                  }}
+                  onSuccess={(msg) => {
+                    setScanMessage({ text: msg, type: 'success' })
+                    setShowScanner(false)
+                    // Rafraîchir les données de la file après un scan réussi
+                    void queryClient.invalidateQueries({
+                      queryKey: ['get-list-number-by-list-id', currentList?.id],
+                    })
+                  }}
+                />
+              )}
+
+              {/* Scan Result Toast */}
+              {scanMessage && (
+                <div className="fixed top-4 right-4 z-100 animate-slide-in">
+                  <div
+                    className={`flex items-start gap-3 rounded-xl shadow-2xl p-4 max-w-sm backdrop-blur-xl border ${scanMessage.type === 'success' ? 'bg-dark-card border-green-500/30' : 'bg-dark-card border-red-500/30'}`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className={`text-[11px] font-medium uppercase tracking-wide mb-1 ${scanMessage.type === 'success' ? 'text-green-400' : 'text-red-400'}`}
+                      >
+                        {scanMessage.type === 'success' ? 'Succès' : 'Erreur'}
+                      </p>
+                      <p className="text-[13px] text-white/85 leading-snug">{scanMessage.text}</p>
+                    </div>
+                    <button
+                      className="shrink-0 p-1 text-white/30 hover:text-white/70 transition-colors"
+                      onClick={() => setScanMessage(null)}
+                      type="button"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Steps Timeline */}
               <div className="bg-dark-secondary border border-dark-border rounded-2xl p-3.5">

@@ -1,6 +1,7 @@
 export * from './auth/auth.service'
 export * from './device/device.service'
 export * from './notification/notification.service'
+export * from './scan/scan.service'
 export * from './shop/shop.service'
 export * from './stats/stats.service'
 export * from './url'
