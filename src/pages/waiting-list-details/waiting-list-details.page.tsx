@@ -161,13 +161,13 @@ export const WaitingListDetailsPage: React.FC<IWaitingListDetailsPageProps> = ()
     if (!deviceListNumber || currentWaitingListNumber.length === 0) return false
 
     // Déjà en cours ou déjà servi → pas de scan
-    if (
-      [IN_PROGRESS, COMPLETED].includes(deviceListNumber.status as WaitingListNumberStatus)
-    )
+    if ([IN_PROGRESS, COMPLETED].includes(deviceListNumber.status as WaitingListNumberStatus))
       return false
 
     // Trier par valeur pour obtenir l'ordre de la file
-    const sorted = [...currentWaitingListNumber].sort((a, b) => a.value.localeCompare(b.value))
+    const sorted = [...currentWaitingListNumber]?.sort((a, b) =>
+      String(a?.value ?? '').localeCompare(String(b?.value ?? '')),
+    )
 
     const myIndex = sorted.findIndex((n) => n.id === deviceListNumber.id)
     if (myIndex === -1) return false
