@@ -30,7 +30,7 @@ export function SplashScreen({ duration = 1800, onFinish }: SplashScreenProps) {
   return (
     <div
       aria-label="Chargement"
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-white transition-opacity duration-400 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center border-dark-border transition-opacity duration-400 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
       role="alert"
     >
       {/* Lettre "C" stylisée */}

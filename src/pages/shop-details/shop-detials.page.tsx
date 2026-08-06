@@ -1,7 +1,15 @@
 import { Clock, Image, Phone, Scissors, Ticket, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BackButton, InfoRow, QueueItem, SalonIdentity, StatCard } from '@/components'
+import {
+  BackButton,
+  InfoRow,
+  QueueItem,
+  SalonIdentity,
+  ShopGalleryComponent,
+  ShopServicesComponent,
+  StatCard,
+} from '@/components'
 import {
   type INewWaitingListNumberDtoIn,
   ShopHorizontalNavBtnLabels,
@@ -196,7 +204,7 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
         <div className="lg:h-full lg:rounded-[36px] lg:border-8 lg:border-dark-secondary lg:shadow-2xl lg:overflow-hidden">
           {/* Inner content with proper mobile styling */}
           <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-hidden">
               {/* Welcome Toast */}
               {welcomeMessage && (
                 <div className="fixed top-4 right-4 z-100 animate-slide-in">
@@ -329,13 +337,11 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
                   </button>
                 </div>
                 {/* Contenu de l'onglet actif */}
-                <div className="mt-1 py-3 bg-blue-400">
+                <div className="mt-1 h-70 overflow-y-auto">
                   {activeTab === SERVICES ? (
-                    <p className="text-white/40 text-xs text-center">Services à venir…</p>
+                    <ShopServicesComponent />
                   ) : (
-                    activeTab === GALLERY && (
-                      <p className="text-white/40 text-xs text-center">Galerie à venir…</p>
-                    )
+                    activeTab === GALLERY && <ShopGalleryComponent />
                   )}
                 </div>
               </div>
