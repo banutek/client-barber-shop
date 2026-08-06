@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useCreateNewDeviceHook } from '../hooks'
+import { useCreateNewDeviceHook } from '../../hooks'
 
 const SLIDES = [
   {

@@ -1,15 +1,10 @@
 import { useCallback, useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import {
-  GeolocationProvider,
-  NotificationBell,
-  NotificationsProvider,
-  OnboardingSlides,
-  OnboardingWelcome,
-  SplashScreen,
-} from './components'
+import { GeolocationProvider, NotificationBell, OnboardingSlides, SplashScreen } from './components'
 import { AuthGuard } from './guards'
 import { HomePage, ShopDetailsPage, WaitingListDetailsPage } from './pages'
+import { OnboardingWelcome } from './components/onboarding'
+import { NotificationsProvider } from './components/notification'
 
 type AppPhase = 'splash' | 'welcome' | 'onboarding' | 'app'
 
