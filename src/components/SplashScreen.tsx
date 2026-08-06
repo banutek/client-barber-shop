@@ -36,7 +36,7 @@ export function SplashScreen({ duration = 1800, onFinish }: SplashScreenProps) {
       {/* Lettre "C" stylisée */}
       <span
         className="text-[120px] font-extrabold leading-none tracking-tighter select-none"
-        style={{ color: '#d4a853', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+        style={{ color: '#d4a853' }}
       >
         THE-HAIR
       </span>
