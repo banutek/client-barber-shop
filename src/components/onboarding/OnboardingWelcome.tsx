@@ -32,7 +32,7 @@ export function OnboardingWelcome({ onFinish }: OnboardingWelcomeProps) {
       {/* Bouton "Débuter" */}
       <div className="relative z-10 px-6 pb-10">
         <button
-          className="w-full rounded-xl bg-[#f97316] py-4 text-lg font-semibold text-white shadow-lg transition-transform active:scale-[0.97]"
+          className="w-full rounded-xl bg-[#d4a853] py-4 text-lg font-semibold text-white shadow-lg transition-transform active:scale-[0.97]"
           onClick={onFinish}
           type="button"
         >

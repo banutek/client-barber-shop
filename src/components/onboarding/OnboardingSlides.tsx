@@ -74,7 +74,7 @@ export function OnboardingSlides({ onFinish }: OnboardingSlidesProps) {
             <button
               aria-label={`Aller à l'étape ${i + 1}`}
               className={`h-2 rounded-full transition-all duration-300 ${
-                i === current ? 'w-6 bg-[#f97316]' : 'w-2 bg-white/40'
+                i === current ? 'w-6 bg-[#d4a853]' : 'w-2 bg-white/40'
               }`}
               key={i}
               onClick={() => setCurrent(i)}
@@ -85,7 +85,7 @@ export function OnboardingSlides({ onFinish }: OnboardingSlidesProps) {
 
         {/* Bouton */}
         <button
-          className="mt-6 w-full rounded-xl bg-[#f97316] py-4 text-lg font-semibold text-white shadow-lg transition-all active:scale-[0.97] disabled:opacity-60"
+          className="mt-6 w-full rounded-xl bg-[#d4a853] py-4 text-lg font-semibold text-white shadow-lg transition-all active:scale-[0.97] disabled:opacity-60"
           disabled={isPending}
           onClick={isLast ? handleFinish : handleNext}
           type="button"
