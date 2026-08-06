@@ -12,21 +12,27 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
       },
       manifest: {
+        background_color: '#ffffff',
         description: 'Barber Shop Client',
+        display: 'standalone',
         icons: [
           {
+            purpose: 'any maskable',
             sizes: '192x192',
             src: 'pwa-192x192.png',
             type: 'image/png',
           },
           {
+            purpose: 'any maskable',
             sizes: '512x512',
             src: 'pwa-512x512.png',
             type: 'image/png',
           },
         ],
         name: 'client-barber',
+        scope: '/',
         short_name: 'client-barber',
+        start_url: '/',
         theme_color: '#ffffff',
       },
       registerType: 'autoUpdate',

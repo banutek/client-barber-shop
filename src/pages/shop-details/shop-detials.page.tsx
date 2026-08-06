@@ -1,8 +1,13 @@
-import { Clock, Phone, Ticket, X } from 'lucide-react'
+import { Clock, Image, Phone, Scissors, Ticket, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BackButton, InfoRow, QueueItem, SalonIdentity, StatCard } from '@/components'
-import { type INewWaitingListNumberDtoIn, ShopOpenStatus, WaitingListNumberStatus } from '@/dto'
+import {
+  type INewWaitingListNumberDtoIn,
+  ShopHorizontalNavBtnLabels,
+  ShopOpenStatus,
+  WaitingListNumberStatus,
+} from '@/dto'
 import { prefixer } from '@/services/url'
 import { useGetShopByIDHook } from '@/hooks/shop'
 import { useDailyStatsHook } from '@/hooks/stats'
@@ -32,6 +37,7 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   const navigate = useNavigate()
   const { shopId } = useParams<{ shopId: string }>()
   const { currentDevice } = useDeviceStore()
+  const { SERVICES, GALLERY } = ShopHorizontalNavBtnLabels
   const { currentShop, setCurrentShop } = useShopStore()
   const { setCurrentWaitingListNumber } = useWaitingListNumberStore()
   const { currentWaitingList, setCurrentWaitingList } = useWaitingListStore()
@@ -44,6 +50,7 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
 
   // Toast de bienvenue local
   const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<ShopHorizontalNavBtnLabels>(SERVICES)
 
   const deviceListNumber = listNumberDatas?.data.waitingListNumbers.find(
     (_) => _.deviceId === currentDevice?.id,
@@ -290,6 +297,47 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
                     ticketNumber={item.ticketNumber}
                   />
                 ))}
+              </div>
+
+              {/* Navigation onglets : Services & Gallerie */}
+              <div className="px-3 py-4">
+                {/* Boutons horizontaux */}
+                <div className="flex gap-2">
+                  <button
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[12px] text-xs font-medium cursor-pointer transition-colors ${
+                      activeTab === SERVICES
+                        ? 'border border-gold/40 bg-gold/10 text-gold'
+                        : 'border border-dark-border bg-dark-card text-white/50 hover:bg-dark-card/80'
+                    }`}
+                    onClick={() => setActiveTab(SERVICES)}
+                    type="button"
+                  >
+                    <Scissors className="w-3.5 h-3.5" />
+                    Services
+                  </button>
+                  <button
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[12px] text-xs font-medium cursor-pointer transition-colors ${
+                      activeTab === GALLERY
+                        ? 'border border-gold/40 bg-gold/10 text-gold'
+                        : 'border border-dark-border bg-dark-card text-white/50 hover:bg-dark-card/80'
+                    }`}
+                    onClick={() => setActiveTab(GALLERY)}
+                    type="button"
+                  >
+                    <Image className="w-3.5 h-3.5" />
+                    Gallerie
+                  </button>
+                </div>
+                {/* Contenu de l'onglet actif */}
+                <div className="mt-1 py-3 bg-blue-400">
+                  {activeTab === SERVICES ? (
+                    <p className="text-white/40 text-xs text-center">Services à venir…</p>
+                  ) : (
+                    activeTab === GALLERY && (
+                      <p className="text-white/40 text-xs text-center">Galerie à venir…</p>
+                    )
+                  )}
+                </div>
               </div>
 
               {/* CTA Button */}

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { useCreateNewDeviceHook, useGetDeviceByIDHook } from '../hooks'
+import { useGetDeviceByIDHook } from '../hooks'
 import { useDeviceStore } from '@/stores'
-import type { IDeviceDtoOut, INewDeviceDtoIn } from '../dto'
+import type { IDeviceDtoOut } from '../dto'
 
 export interface IAuthGuardProps {
   children: React.ReactNode
@@ -20,24 +20,15 @@ export const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
     })(),
   )
   const { currentDevice, setCurrentDevice } = useDeviceStore()
-  const hasCreatedDevice = React.useRef(false)
 
-  const { mutate: doCreateNewDevice } = useCreateNewDeviceHook()
   const { data, isLoading: isGettingDevice } = useGetDeviceByIDHook(currentDevice?.id as string)
 
   useEffect(() => {
     const deviceInfo = deviceInfoReference.current
     if (deviceInfo) {
       setCurrentDevice(deviceInfo)
-    } else if (!hasCreatedDevice.current) {
-      hasCreatedDevice.current = true
-      const requestBody: INewDeviceDtoIn = {
-        platform: 'web',
-      }
-      console.log({ requestBody })
-      doCreateNewDevice(requestBody)
     }
-  }, [setCurrentDevice, doCreateNewDevice])
+  }, [setCurrentDevice])
 
   useEffect(() => {
     if (!data) {
@@ -47,9 +38,6 @@ export const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
     localStorage.setItem('device_infos', JSON.stringify(data?.data.device))
     setCurrentDevice(data?.data.device)
   }, [data, setCurrentDevice])
-
-  console.log({ currentDevice })
-  console.log({ isGettingDevice })
 
   if (isGettingDevice || !currentDevice) {
     return (

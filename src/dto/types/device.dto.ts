@@ -1,16 +1,17 @@
+import type { IUserDtoOut } from './user.dto'
 import type { IWaitingListNumbersDtoOut } from './waiting-list-numbers.dto'
 
 export interface IDeviceDtoOut {
-  client: string
-  clientId: string
-  createdAt: string
-  device_notification: string[]
-  device_scan_event: string[]
-  device_waiting_list_number?: IWaitingListNumbersDtoOut[]
   id: string
   platform: string
   push_token?: string
+  createdAt: string
   updatedAt: string
+  clientId: string
+  client: IUserDtoOut
+  device_waiting_list_number?: IWaitingListNumbersDtoOut[]
+  device_notification: string[]
+  device_scan_event: string[]
 }
 
 export interface INewDeviceDtoIn {

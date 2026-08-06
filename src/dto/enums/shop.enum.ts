@@ -10,3 +10,8 @@ export enum WaitingListStatusEnum {
   CLOSED = 'CLOSED',
   OPEN = 'OPEN',
 }
+
+export enum ShopHorizontalNavBtnLabels {
+  SERVICES = 'Services',
+  GALLERY = 'Gallerie',
+}

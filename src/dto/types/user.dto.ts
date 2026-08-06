@@ -1,5 +1,6 @@
 import type { IBarberShopDtoOut } from './barber-shop.dto'
 import { RoleEnum } from '../enums'
+import type { IDeviceDtoOut } from './device.dto'
 
 type Role = (typeof RoleEnum)[keyof typeof RoleEnum]
 
@@ -22,20 +23,22 @@ export interface INewUserDtoIn {
   password: string
   phone: string
   role: Role
+  deviceId: string
 }
 
 export interface IUserDtoOut {
-  address: string
-  client_device?: string
-  createdAt: Date
-  email: string
-  firstName: string
   id: string
   lastName: string
-  manager_barber_shop?: IBarberShopDtoOut
-  phone: string
-
+  firstName: string
+  email: string
+  phone?: string
+  address?: string
+  password: string
   role: Role
+  createdAt: Date
   updatedAt: Date
+  manager_barber_shop?: IBarberShopDtoOut
+  client_device?: IDeviceDtoOut
+
   user_clients_profile?: string
 }
