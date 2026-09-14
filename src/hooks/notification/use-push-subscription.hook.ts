@@ -7,7 +7,9 @@ import type { AxiosResponse } from 'axios'
  * puis s'abonne au PushManager. La clé est dynamique — plus besoin de variable d'env.
  */
 async function subscribeUserToPush(): Promise<null | PushSubscription> {
+  console.log('[Push] subscribeUserToPush called')
   const registration = await navigator.serviceWorker.ready
+  console.log('{registration}::::::::::::::::::::::', registration)
   const existingSubscription = await registration.pushManager.getSubscription()
   if (existingSubscription) {
     return existingSubscription
@@ -40,6 +42,10 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export const usePushSubscriptionHook = (deviceId: string) => {
+  console.log(
+    '[Push] usePushSubscriptionHook called with deviceId:;;;;;;;;;;;;;;;;;;;;;;',
+    deviceId,
+  )
   return useMutation<AxiosResponse, Error, void>({
     mutationFn: async () => {
       if (!('serviceWorker' in navigator) || !('PushManager' in globalThis)) {
@@ -48,11 +54,14 @@ export const usePushSubscriptionHook = (deviceId: string) => {
       }
 
       const permission = await Notification.requestPermission()
+      console.log({ permission })
       if (permission !== 'granted') {
+        console.log('[Push] Permission de notification refusée')
         throw new Error('Permission de notification refusée')
       }
 
       const subscription = await subscribeUserToPush()
+      console.log({ subscription })
       if (!subscription) {
         throw new Error("Échec de l'abonnement push")
       }

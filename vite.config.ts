@@ -10,6 +10,7 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        swSrc: 'src/sw.ts',
       },
       manifest: {
         background_color: '#ffffff',
@@ -35,6 +36,7 @@ export default defineConfig({
         start_url: '/',
         theme_color: '#ffffff',
       },
+      devOptions: { enabled: true, type: 'module' },
       registerType: 'autoUpdate',
       srcDir: 'src',
       strategies: 'injectManifest',

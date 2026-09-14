@@ -38,7 +38,7 @@ export function SplashScreen({ duration = 1800, onFinish }: SplashScreenProps) {
         className="text-[120px] font-extrabold leading-none tracking-tighter select-none"
         style={{ color: '#d4a853' }}
       >
-        THE-HAIR
+        THE HAIR
       </span>
 
       {/* Spinner circulaire orange */}

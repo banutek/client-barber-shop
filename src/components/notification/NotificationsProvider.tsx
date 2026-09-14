@@ -20,6 +20,8 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({ ch
   // Polling des notifications
   const { data: notificationsData } = useNotificationsHook(currentDevice?.id ?? '')
 
+  console.log({ notificationsData })
+
   // Sync vers le store Zustand
   useEffect(() => {
     if (notificationsData?.data?.notifications) {
