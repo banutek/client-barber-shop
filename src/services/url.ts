@@ -49,6 +49,11 @@ export const pushTokenUrls = {
   REGISTER_PUSH_TOKEN: (deviceId: string) => `${prefixer}device/${deviceId}/push-token`,
 }
 
+export const galleryUrls = {
+  GET_GALLERY_BY_SHOP_ID: (shopId: string) => `${prefixer}gallery/shop/${shopId}`,
+  GET_GALLERY_BY_SERVICE_ID: (serviceId: string) => `${prefixer}gallery/service/${serviceId}`,
+}
+
 export const scanUrls = {
   SERVE_BY_BARCODE: `${prefixer}waiting-list-number/serve-by-barcode`,
 }

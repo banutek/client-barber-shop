@@ -197,106 +197,100 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
   )
 
   return (
-    <div className="min-h-screen w-full bg-dark-bg lg:h-screen lg:min-h-0">
-      {/* Mobile-first container with max-width for large screens */}
-      <div className="mx-auto w-full max-w-md lg:max-w-lg xl:max-w-xl lg:h-full">
-        {/* Phone frame simulation - hidden on small screens, visible on large screens */}
-        <div className="lg:h-full lg:rounded-[36px] lg:border-8 lg:border-dark-secondary lg:shadow-2xl lg:overflow-hidden">
-          {/* Inner content with proper mobile styling */}
-          <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
-            <main className="flex-1 overflow-hidden">
-              {/* Welcome Toast */}
-              {welcomeMessage && (
-                <div className="fixed top-4 right-4 z-100 animate-slide-in">
-                  <div className="flex items-start gap-3 bg-dark-card border border-gold/20 rounded-xl shadow-2xl p-4 max-w-sm backdrop-blur-xl">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-medium text-gold uppercase tracking-wide mb-1">
-                        Bienvenue
-                      </p>
-                      <p className="text-[13px] text-white/85 leading-snug">{welcomeMessage}</p>
-                    </div>
-                    <button
-                      className="shrink-0 p-1 text-white/30 hover:text-white/70 transition-colors"
-                      onClick={() => setWelcomeMessage(null)}
-                      type="button"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+    // <div className="min-h-screen w-full bg-dark-bg lg:h-screen lg:min-h-0">
+    // {/* Mobile-first container with max-width for large screens */}
+    <div className="mx-auto w-full max-w-md lg:max-w-lg xl:max-w-xl lg:h-full">
+      {/* Phone frame simulation - hidden on small screens, visible on large screens */}
+      <div className="lg:h-full lg:rounded-[36px] lg:border-8 lg:border-dark-secondary lg:shadow-2xl lg:overflow-hidden">
+        {/* Inner content with proper mobile styling */}
+        <div className="bg-dark-bg min-h-screen lg:min-h-0 lg:h-full lg:rounded-[28px] overflow-hidden flex flex-col">
+          <main className="flex-1 overflow-hidden">
+            {/* Welcome Toast */}
+            {welcomeMessage && (
+              <div className="fixed top-4 right-4 z-100 animate-slide-in">
+                <div className="flex items-start gap-3 bg-dark-card border border-gold/20 rounded-xl shadow-2xl p-4 max-w-sm backdrop-blur-xl">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-medium text-gold uppercase tracking-wide mb-1">
+                      Bienvenue
+                    </p>
+                    <p className="text-[13px] text-white/85 leading-snug">{welcomeMessage}</p>
                   </div>
+                  <button
+                    className="shrink-0 p-1 text-white/30 hover:text-white/70 transition-colors"
+                    onClick={() => setWelcomeMessage(null)}
+                    type="button"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Hero Section */}
-              <div
-                className="rounded-[20px] p-4 mx-3 mt-0 mb-2.5 relative overflow-hidden bg-[#141418] bg-cover bg-center"
-                style={
-                  currentShop?.profileImage
-                    ? {
-                        backgroundImage: `url(${prefixer.replace(/\/api\/v1\/?$/, '')}${currentShop.profileImage})`,
-                      }
-                    : undefined
-                }
-              >
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-[#141418]/80" />
-                {/* Back Button */}
-                <div className="relative z-10 mb-4">
-                  <BackButton label="Salons" onClick={() => navigate('/')} />
-                </div>
-
-                {/* Salon Identity */}
-                <div className="relative z-10">
-                  <SalonIdentity
-                    location={currentShop?.address as string}
-                    name={currentShop?.name as string}
-                    shopLat={currentShop?.latitude}
-                    shopLng={currentShop?.longitude}
-                  />
-                </div>
-
-                {/* Stats Row */}
-                <div className="relative z-10 grid grid-cols-3 gap-1.5">
-                  <StatCard
-                    label={waitingCount?.length ? 'En attente' : 'Non disponible'}
-                    value={waitingCount?.length as number}
-                  />
-                  <StatCard
-                    label="Attente moy."
-                    unit="min"
-                    value={statsData?.data.avgWaitMin ?? 0}
-                  />
-
-                  <StatCard
-                    label="N° courant"
-                    value={
-                      currentWaitingList?.current_number
-                        ? String(currentWaitingList?.current_number).padStart(2, '0')
-                        : 'Aucun'
+            {/* Hero Section */}
+            <div
+              className="rounded-[20px] p-4 mx-3 mt-0 mb-2.5 relative overflow-hidden bg-[#141418] bg-cover bg-center"
+              style={
+                currentShop?.profileImage
+                  ? {
+                      backgroundImage: `url(${prefixer.replace(/\/api\/v1\/?$/, '')}${currentShop.profileImage})`,
                     }
-                  />
-                </div>
+                  : undefined
+              }
+            >
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-[#141418]/80" />
+              {/* Back Button */}
+              <div className="relative z-10 mb-4">
+                <BackButton label="Salons" onClick={() => navigate('/')} />
               </div>
 
-              {/* Info Section */}
-              <div className="bg-dark-secondary border border-dark-border rounded-2xl py-3 px-3.5 mx-3 mb-2">
-                <InfoRow
-                  icon={Clock}
-                  label="Horaires"
-                  value={currentShop?.hours || DEFAULT_HOURS}
-                />
-                <InfoRow
-                  icon={Phone}
-                  isLast
-                  label="Téléphone"
-                  value={currentShop?.phone || (currentShop?.manager?.phone as string)}
+              {/* Salon Identity */}
+              <div className="relative z-10">
+                <SalonIdentity
+                  location={currentShop?.address as string}
+                  name={currentShop?.name as string}
+                  shopLat={currentShop?.latitude}
+                  shopLng={currentShop?.longitude}
                 />
               </div>
 
-              {/* Live Queue Section */}
-              <div className="bg-dark-secondary border border-dark-border rounded-2xl py-3 px-3.5 mx-3 mb-3">
-                <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-2.5">
-                  File en direct
-                </p>
+              {/* Stats Row */}
+              <div className="relative z-10 grid grid-cols-3 gap-1.5">
+                <StatCard
+                  label={waitingCount?.length ? 'En attente' : 'Non disponible'}
+                  value={waitingCount?.length as number}
+                />
+                <StatCard label="Attente moy." unit="min" value={statsData?.data.avgWaitMin ?? 0} />
+
+                <StatCard
+                  label="N° courant"
+                  value={
+                    currentWaitingList?.current_number
+                      ? String(currentWaitingList?.current_number).padStart(2, '0')
+                      : 'Aucun'
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Info Section */}
+            <div className="bg-dark-secondary border border-dark-border rounded-2xl py-3 px-3.5 mx-3 mb-2">
+              <InfoRow icon={Clock} label="Horaires" value={currentShop?.hours || DEFAULT_HOURS} />
+              <InfoRow
+                icon={Phone}
+                isLast
+                label="Téléphone"
+                value={currentShop?.phone || (currentShop?.manager?.phone as string)}
+              />
+            </div>
+
+            {/* Live Queue Section */}
+            {/* <div className="bg-dark-secondary border border-dark-border rounded-2xl py-3 px-3.5 mx-3 mb-3"> */}
+            <div className="bg-dark-secondary border border-dark-border rounded-2xl py-3 px-3.5 mx-3 mb-3 h-45">
+              <p className="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-2.5">
+                File en direct
+              </p>
+              <div className="h-35 overflow-y-auto">
                 {groupedQueue?.map((item, index) => (
                   <QueueItem
                     isLast={index === groupedQueue.length - 1}
@@ -306,65 +300,66 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
                   />
                 ))}
               </div>
+            </div>
 
-              {/* Navigation onglets : Services & Gallerie */}
-              <div className="px-3 py-4">
-                {/* Boutons horizontaux */}
-                <div className="flex gap-2">
-                  <button
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[12px] text-xs font-medium cursor-pointer transition-colors ${
-                      activeTab === SERVICES
-                        ? 'border border-gold/40 bg-gold/10 text-gold'
-                        : 'border border-dark-border bg-dark-card text-white/50 hover:bg-dark-card/80'
-                    }`}
-                    onClick={() => setActiveTab(SERVICES)}
-                    type="button"
-                  >
-                    <Scissors className="w-3.5 h-3.5" />
-                    Services
-                  </button>
-                  <button
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[12px] text-xs font-medium cursor-pointer transition-colors ${
-                      activeTab === GALLERY
-                        ? 'border border-gold/40 bg-gold/10 text-gold'
-                        : 'border border-dark-border bg-dark-card text-white/50 hover:bg-dark-card/80'
-                    }`}
-                    onClick={() => setActiveTab(GALLERY)}
-                    type="button"
-                  >
-                    <Image className="w-3.5 h-3.5" />
-                    Gallerie
-                  </button>
-                </div>
-                {/* Contenu de l'onglet actif */}
-                <div className="mt-1 h-70 overflow-y-auto">
-                  {activeTab === SERVICES ? (
-                    <ShopServicesComponent />
-                  ) : (
-                    activeTab === GALLERY && <ShopGalleryComponent />
-                  )}
-                </div>
-              </div>
-
-              {/* CTA Button */}
-              <div className="px-3 pb-4">
+            {/* Navigation onglets : Services & Gallerie */}
+            <div className="px-3 py-4">
+              {/* Boutons horizontaux */}
+              <div className="flex gap-2">
                 <button
-                  className="w-full py-3.5 rounded-[14px] border-none bg-gold text-dark-bg text-sm font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-gold/90 transition-colors disabled:bg-dark-card disabled:text-white/30 disabled:cursor-not-allowed disabled:hover:bg-dark-card"
-                  disabled={!isOpen}
-                  onClick={handleTakeTicket}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[12px] text-xs font-medium cursor-pointer transition-colors ${
+                    activeTab === SERVICES
+                      ? 'border border-gold/40 bg-gold/10 text-gold'
+                      : 'border border-dark-border bg-dark-card text-white/50 hover:bg-dark-card/80'
+                  }`}
+                  onClick={() => setActiveTab(SERVICES)}
+                  type="button"
                 >
-                  <Ticket className="w-4 h-4" />
-                  {isOpen
-                    ? deviceListNumber
-                      ? 'Voir détails file'
-                      : 'Tirer mon numéro'
-                    : 'Pas encore disponible'}
+                  <Scissors className="w-3.5 h-3.5" />
+                  Services
+                </button>
+                <button
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[12px] text-xs font-medium cursor-pointer transition-colors ${
+                    activeTab === GALLERY
+                      ? 'border border-gold/40 bg-gold/10 text-gold'
+                      : 'border border-dark-border bg-dark-card text-white/50 hover:bg-dark-card/80'
+                  }`}
+                  onClick={() => setActiveTab(GALLERY)}
+                  type="button"
+                >
+                  <Image className="w-3.5 h-3.5" />
+                  Gallerie
                 </button>
               </div>
-            </main>
-          </div>
+              {/* Contenu de l'onglet actif */}
+              <div className="mt-1 h-65 overflow-y-auto">
+                {activeTab === SERVICES ? (
+                  <ShopServicesComponent />
+                ) : (
+                  activeTab === GALLERY && <ShopGalleryComponent shopId={shopId} />
+                )}
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="px-3 pb-4">
+              <button
+                className="w-full py-3.5 rounded-[14px] border-none bg-gold text-dark-bg text-sm font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-gold/90 transition-colors disabled:bg-dark-card disabled:text-white/30 disabled:cursor-not-allowed disabled:hover:bg-dark-card"
+                disabled={!isOpen}
+                onClick={handleTakeTicket}
+              >
+                <Ticket className="w-4 h-4" />
+                {isOpen
+                  ? deviceListNumber
+                    ? 'Voir détails file'
+                    : 'Tirer mon numéro'
+                  : 'Pas encore disponible'}
+              </button>
+            </div>
+          </main>
         </div>
       </div>
     </div>
+    // </div>
   )
 }

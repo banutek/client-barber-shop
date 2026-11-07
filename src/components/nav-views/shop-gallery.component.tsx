@@ -1,34 +1,68 @@
-import React from 'react'
+import React, { useMemo } from 'react'
+import type { IGalleryDtoOut } from '@/dto'
+import { useGetGalleryByShopHook } from '@/hooks'
+import { resolveImageUrl } from '@/utils/image'
 
 export interface IShopGalleryComponentProps {
   default_method?: () => void
   default_props?: boolean
+  shopId?: string
+  accessToken?: string
 }
 
-const PLACEHOLDER_IDS = [
-  101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
-  120,
-]
+export const ShopGalleryComponent: React.FC<IShopGalleryComponentProps> = ({ shopId }) => {
+  const { data, isLoading, isError } = useGetGalleryByShopHook(shopId || '')
+  const images = useMemo<IGalleryDtoOut[]>(() => data?.data.images ?? [], [data])
 
-const GALLERY_IMAGES = PLACEHOLDER_IDS.map((id) => ({
-  id,
-  src: `https://loremflickr.com/400/400/hair,hairstyle,haircut?random=${id}`,
-  alt: `Galerie coiffure ${id}`,
-}))
+  const sortedImages = useMemo(
+    () =>
+      [...images].sort((first, second) => (first.displayOrder ?? 0) - (second.displayOrder ?? 0)),
+    [images],
+  )
 
-export const ShopGalleryComponent: React.FC<IShopGalleryComponentProps> = () => {
+  if (!shopId) {
+    return (
+      <p className="rounded-xl border border-dark-border bg-dark-card px-4 py-6 text-center text-xs text-white/50">
+        Sélectionnez un salon pour voir sa galerie.
+      </p>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div aria-label="Chargement de la galerie" className="grid grid-cols-3 gap-1.5 animate-pulse">
+        {[0, 1, 2, 3, 4, 5].map((item) => (
+          <div key={item} className="aspect-square rounded-xl bg-dark-secondary" />
+        ))}
+      </div>
+    )
+  }
+
+  if (isError) {
+    console.error('[ShopGalleryComponent] Failed to load gallery.')
+    return <p className="text-xs text-red-400">Impossible de charger la galerie.</p>
+  }
+
+  if (sortedImages.length === 0) {
+    return (
+      <p className="rounded-xl border border-dark-border bg-dark-card px-4 py-6 text-center text-xs text-white/50">
+        Aucune image disponible pour ce salon.
+      </p>
+    )
+  }
+
   return (
     <div className="grid grid-cols-3 gap-1.5">
-      {GALLERY_IMAGES.map(({ id, src, alt }) => (
+      {sortedImages.map((image) => (
         <div
-          key={id}
+          key={image.id}
           className="relative aspect-square rounded-xl overflow-hidden bg-dark-secondary border border-white/5"
         >
           <img
-            alt={alt}
+            alt={image.alt || 'Galerie du salon'}
             className="absolute inset-0 w-full h-full object-cover"
             loading="lazy"
-            src={src}
+            src={resolveImageUrl(image.url)}
           />
         </div>
       ))}
