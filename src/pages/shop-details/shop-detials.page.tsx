@@ -101,8 +101,6 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
     setCurrentShop(data.data.shop)
   }, [data, setCurrentShop])
 
-  console.log({ currentShop })
-
   useEffect(() => {
     if (listNumberDatas) {
       setCurrentWaitingListNumber(listNumberDatas?.data.waitingListNumbers)
@@ -136,8 +134,6 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
     const currentList = currentShop?.barber_shop_waiting_list?.find(
       (_) => new Date(_.createdAt).getDay() === new Date().getDay(),
     )
-    console.log({ currentShop })
-    console.log({ currentList })
     if (currentList) {
       const requestBody: INewWaitingListNumberDtoIn = {
         deviceId: currentDevice?.id as string,
@@ -333,8 +329,8 @@ export const ShopDetailsPage: React.FC<IShopDetailsPageProps> = () => {
               </div>
               {/* Contenu de l'onglet actif */}
               <div className="mt-1 h-65 overflow-y-auto">
-                {activeTab === SERVICES ? (
-                  <ShopServicesComponent />
+                {activeTab === SERVICES && currentShop ? (
+                  <ShopServicesComponent services={currentShop.barber_shop_service} />
                 ) : (
                   activeTab === GALLERY && <ShopGalleryComponent shopId={shopId} />
                 )}
